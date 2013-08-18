@@ -164,7 +164,8 @@ Human.prototype.prepareTransfer = function(){
 
 var Ai = function(id){
     Player.call(this, id);
-    this.brain = new randomBrain(this);
+    if(id === 1) this.brain = new randomBrain(this);
+    else this.brain = new simpleBrain(this);
 };
 
 Ai.prototype = Object.create(Player.prototype);
@@ -198,7 +199,7 @@ Ai.prototype.watch = function(){
 };
 
 Ai.prototype.myTurn = function(){
-    this.row.hideOut(this.brain.decide());
+    this.row.hideOut(this.brain.decide(game.board.desk.cards));
     this.next(500);
 };
 

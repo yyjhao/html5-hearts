@@ -243,7 +243,7 @@ randomBrain.prototype = Object.create(Brain.prototype);
 //     }
 // };
 
-randomBrain.prototype.decide = function(){
+randomBrain.prototype.decide = function(board){
     // var a = 10,
     //     b = 1,
     //     vc = this.user.getValidCards(),
