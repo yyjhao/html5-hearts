@@ -164,7 +164,7 @@ Human.prototype.prepareTransfer = function(){
 
 var Ai = function(id){
     Player.call(this, id);
-    this.brain = new probBrain(this);
+    this.brain = new randomBrain(this);
 };
 
 Ai.prototype = Object.create(Player.prototype);

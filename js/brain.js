@@ -1,42 +1,22 @@
-var PlayerInfo = function(){
-    // this.spade = [];
-    // this.hearts = [];
-    // this.diamond = [];
-    // this.club = [];
-    this[0] = [];
-    this[1] = [];
-    this[2] = [];
-    this[3] = [];
-};
-
-PlayerInfo.prototype.addCard = function(card){
-    if(this[card.suit].indexOf(card.num)){
-        this[card.suit].push(card.num);
-    }
-};
-
 var Brain = function(user){
     this.user = user;
-    this.playerInfo = [];
-    for(var i = 0; i < 4; i++){
-        this.playerInfo.push(new PlayerInfo());
-    }
+    this.playerInfo = [[], [], [], []];
 };
 
 Brain.prototype.watch = function(info){
-    return;
-    var self = this;
-    info.forEach(function(a,ind){
-        var c;
-        if(!(a instanceof Array)){
-            c = [a];
-        }else{
-            c = a;
-        }
-        c.forEach(function(cc){
-            self.playerInfo[ind].addCard(cc);
-        });
-    });
+    // var infos = this.playerInfo;
+    // info.forEach(function(a,ind){
+    //     if(!a) return;
+    //     var c;
+    //     if(!(a instanceof Array)){
+    //         c = [a];
+    //     }else{
+    //         c = a;
+    //     }
+    //     c.forEach(function(cc){
+    //         infos[ind].addCard(cc);
+    //     });
+    // });
 };
 
 Brain.prototype.scoreOf = function(card){
@@ -49,35 +29,35 @@ Brain.prototype.scoreOf = function(card){
     }
 };
 
-var probBrain = function(user){
+var randomBrain = function(user){
     Brain.call(this, user);
 };
 
-probBrain.prototype = Object.create(Brain.prototype);
+randomBrain.prototype = Object.create(Brain.prototype);
 
-probBrain.prototype.eScore = function(card){
-    if(game.board.desk.cards.length > 0){
-        if(card.suit !== game.board.desk.cards[0].suit){
-            return 0;
-        }
-        if(game.board.desk.cards.some(function(c){
-            return c.suit === game.board.desk.cards[0].suit && c.num > card.num;
-        })){
-            return 0;
-        }
-    }
-    var score = this.scoreOf(card);
-    for(var i = 0; i < game.board.desk.cards.length; i++){
-        score += this.scoreOf(game.board.desk.cards);
-    }
-    if(game.board.desk.cards.length === 3){
-        return score;
-    }else{
-        var suit = game.board.desk.cards.length > 0 ? game.board.desk.cards[0].suit : card.suit;
-        return this.getExpected(score, suit, 3 - game.board.desk.cards.length);
-    }
+// probBrain.prototype.eScore = function(card){
+//     if(game.board.desk.cards.length > 0){
+//         if(card.suit !== game.board.desk.cards[0].suit){
+//             return 0;
+//         }
+//         if(game.board.desk.cards.some(function(c){
+//             return c.suit === game.board.desk.cards[0].suit && c.num > card.num;
+//         })){
+//             return 0;
+//         }
+//     }
+//     var score = this.scoreOf(card);
+//     for(var i = 0; i < game.board.desk.cards.length; i++){
+//         score += this.scoreOf(game.board.desk.cards);
+//     }
+//     if(game.board.desk.cards.length === 3){
+//         return score;
+//     }else{
+//         var suit = game.board.desk.cards.length > 0 ? game.board.desk.cards[0].suit : card.suit;
+//         return this.getExpected(score, suit, 3 - game.board.desk.cards.length);
+//     }
     
-};
+// };
 
 // probBrain.prototype.getExpected = function(score, suit, remaining){
 //     function conjecture(pos, type){
@@ -263,7 +243,7 @@ probBrain.prototype.eScore = function(card){
 //     }
 // };
 
-probBrain.prototype.decide = function(){
+randomBrain.prototype.decide = function(){
     // var a = 10,
     //     b = 1,
     //     vc = this.user.getValidCards(),
