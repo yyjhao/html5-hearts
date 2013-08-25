@@ -24,6 +24,9 @@ simpleBrain.prototype.decide = function(board){
                     if(cur.num < maxNum){
                         if(prev.num > maxNum || prev.num < cur.num) return cur;
                         else return prev;
+                    }else if(cur.num > maxNum && prev.num > maxNum && board.length === 3){
+                        if(cur.num > prev.num) return cur;
+                        else return prev;
                     }else if(cur.num < prev.num){
                         return cur;
                     }else{
