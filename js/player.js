@@ -84,30 +84,32 @@ Player.prototype.takeIn = function(inCards){
     });
 };
 
-Player.prototype.getValidCards = function(){
+Player.prototype.getValidCards = function(cards, _game){
+    cards = cards || this.row.cards;
+    var game = _game || window.game;
     if(game.board.isEmpty()){
         if(game.isHeartBroken()){
-            return this.row.cards;
-        }else if(this.row.cards.length === 13){
+            return cards;
+        }else if(cards.length === 13){
             return [game.board.cards[26]];
         }else{
-            var cards = this.row.cards.filter(function(c){
+            var vcards = cards.filter(function(c){
                 return c.suit !== 1;
             });
-            if(cards.length === 0){
-                return this.row.cards;
+            if(vcards.length === 0){
+                return vcards.concat(cards);
             }else{
-                return cards;
+                return vcards;
             }
         }
     }else{
-        var cards = this.row.cards.filter(function(c){
+        var vcards = cards.filter(function(c){
             return c.suit === game.board.desk.cards[0].suit;
         });
-        if(cards.length === 0){
-            return this.row.cards;
+        if(vcards.length === 0){
+            return vcards.concat(cards);
         }else{
-            return cards;
+            return vcards;
         }
     }
 };
@@ -164,7 +166,7 @@ Human.prototype.prepareTransfer = function(){
 
 var Ai = function(id){
     Player.call(this, id);
-    if(id === 1) this.brain = new randomBrain(this);
+    if(id === 1) this.brain = new McBrain(this);
     else this.brain = new simpleBrain(this);
 };
 
@@ -188,18 +190,23 @@ Ai.prototype.prepareTransfer = function(){
 };
 
 Ai.prototype.transfer = function(cards){
-    var to = Player.prototype.transfer.call(this,cards),
-        info = [null,null,null,null];
-    info[to] = cards;
+    var to = Player.prototype.transfer.call(this,cards);
+    this.brain.watch({
+        type: "in",
+        player: game.players[to],
+        cards: cards
+    });
+};
+
+Ai.prototype.watch = function(info){
     this.brain.watch(info);
 };
 
-Ai.prototype.watch = function(){
-    this.brain.watch(game.board.desk.cards);
-};
-
 Ai.prototype.myTurn = function(){
-    this.row.hideOut(this.brain.decide(game.board.desk.cards));
+    var ind = this.brain.decide(game.board.desk.cards);
+    var card = this.row.cards[ind];
+    this.row.hideOut(ind);
+    game.informCardOut(this, card);
     this.next(500);
 };
 

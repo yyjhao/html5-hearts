@@ -140,7 +140,7 @@
                         var pc = board.cards[carddeck[curI]];
                     }
                     curI++;
-                    setTimeout(move, 70);
+                    setTimeout(move, 10);
                 }
                 curI = 0;
                 var carddeck=[];
@@ -191,13 +191,12 @@
             'playing': function(){
                 interface.button.classList.remove('show');
                 if(board.desk.cards.length === 4){
-                    players.forEach(function(p){
-                        p.watch();
-                    });
                     board.desk.score();
                 }else if(players[0].row.curShifted.length === 1){
                     interface.hideMessage();
-                    players[0].row.out(players[0].row.curShifted[0].ind, true);
+                    var card = players[0].row.curShifted[0];
+                    players[0].row.out(card.ind, true);
+                    game.informCardOut(players[0], card);
                     players[0].next();
                 }else{
                     players[currentPlay].myTurn();
@@ -226,6 +225,16 @@
                 newRound();
             }
         })[status]();
+    };
+
+    game.informCardOut = function(player, card){
+        players.forEach(function(p){
+            p.watch({
+                type: "out",
+                player: player,
+                card: card
+            });
+        });
     };
 
     game.init = function(){
