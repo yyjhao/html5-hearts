@@ -1,4 +1,8 @@
-game.state = {
+if(window.isDebug){
+	localStorage = {};
+}
+
+window.game.state = {
 	apply: function(){
 		var arrangement = game.storage.last;
 		game.players.forEach(function(p,ind){
@@ -51,30 +55,9 @@ game.state = {
 	}
 };
 
-game.storage = {};
+window.game.storage = {};
 
-(function(obj, storages){
-	function addStorage(obj, name, def){
-		if(localStorage.getItem('yyjhao.hearts.' + name) === null){
-			localStorage.setItem('yyjhao.hearts.' + name, def);
-		}
-		(function(obj, name){
-			obj['_' + name] = JSON.parse(localStorage['yyjhao.hearts.' + name]);
-			Object.defineProperty(obj, name,{
-				get: function(){
-					return this['_'+name];
-				},
-				set: function(n){
-					localStorage['yyjhao.hearts.' + name] = JSON.stringify(n);
-					this['_'+name] = n;
-				}
-			})
-		})(obj, name);
-	}
-	for(name in storages){
-		addStorage(obj,name,storages[name]);
-	}
-})(game.storage, {
+var storeSetup = {
 	names:  '["Jack", "Octavian", "Antony", "Lepidus"]',
 	totalScore: 0,
 	totalVictory: 0,
@@ -82,4 +65,32 @@ game.storage = {};
 	timesPlayed: 0,
 	totalSTM: 0,
 	last: 'false'
-});
+};
+
+if(window.isDebug){
+	window.game.storage = storeSetup;
+}else{
+	(function(obj, storages){
+		function addStorage(obj, name, def){
+			if(localStorage['yyjhao.hearts.' + name] === null){
+				localStorage['yyjhao.hearts.' + name] = def;
+			}
+			(function(obj, name){
+				var str = localStorage['yyjhao.hearts.' + name]
+				obj['_' + name] = str ? JSON.parse(str) : str;
+				Object.defineProperty(obj, name,{
+					get: function(){
+						return this['_'+name];
+					},
+					set: function(n){
+						localStorage['yyjhao.hearts.' + name] = JSON.stringify(n);
+						this['_'+name] = n;
+					}
+				})
+			})(obj, name);
+		}
+		for(name in storages){
+			addStorage(obj,name,storages[name]);
+		}
+	})(window.game.storage, storeSetup);
+}

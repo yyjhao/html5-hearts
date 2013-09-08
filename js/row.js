@@ -12,12 +12,13 @@ Row.prototype.addCard = function(card){
     card.ind = this.cards.length;
     this.cards.push(card);
     card.flip(this.flipped);
-    if(!this.flipped){
+    if(!window.isDebug && !this.flipped){
         card.display.onmouseup = card.shift(card);
     }
 };
 
 Row.prototype.adjustPos = function(){
+    if(window.isDebug) return;
     if(this.isVertical){
         this.distance = game.layout.width / 2 - game.layout.rowMargin - game.layout.cardHeight / 2;
         this.playedBy.board.display.style.top = game.layout.height / 2 - game.layout.boardHeight / 2 + 'px';
@@ -98,6 +99,7 @@ Row.prototype.addShift = function(nc){
 };
 
 Row.prototype.showButton = function(){
+    if(window.isDebug) return;
     game.interface.button.innerHTML = 'Go!';
     game.interface.button.classList.add('show');
 };
@@ -109,7 +111,9 @@ Row.prototype.out = function(ind, toDesk){
     if(c.suit === 1 && toDesk){
         game.informHeartBroken();
     }
-    c.display.onmouseup = null;
+    if(!window.isDebug){
+        c.display.onmouseup = null;
+    }
     this.cards.splice(ind, 1);
     for(var i = ind; i < this.cards.length; i++){
         this.cards[i].ind = i;
@@ -138,14 +142,18 @@ Row.prototype.hideOut = function(ind){
     this.cards[mid] = tmp;
     this.cards[ind].ind = ind;
     this.cards[mid].ind = mid;
-    this.cards[ind].display.style[vendorPrefix + 'Transition'] = 'none';
-    this.cards[mid].display.style[vendorPrefix + 'Transition'] = 'none';
+    if(!window.isDebug){
+        this.cards[ind].display.style[vendorPrefix + 'Transition'] = 'none';
+        this.cards[mid].display.style[vendorPrefix + 'Transition'] = 'none';
+    }
     this.cards[mid].adjustPos();
     this.cards[ind].adjustPos();
-    this.cards[ind].display.style[vendorPrefix + 'Transition'] = '';
-    this.cards[mid].display.style[vendorPrefix + 'Transition'] = '';
+    if(!window.isDebug){
+        this.cards[ind].display.style[vendorPrefix + 'Transition'] = '';
+        this.cards[mid].display.style[vendorPrefix + 'Transition'] = '';
+    }
     var self = this;
     setTimeout(function(){
         self.out(mid, true);
-    }, 100);
+    }, window.isDebug ? 0 : 100);
 };

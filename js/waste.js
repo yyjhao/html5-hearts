@@ -4,9 +4,10 @@ var Waste = function(id){
     this.isVertical = id % 2;
     this.rotation = 90 * ((id + 1) % 4) -90;
     this.cards = [];
-}
+};
 
 Waste.prototype.adjustPos = function(){
+    if(window.isDebug) return;
     if(this.isVertical){
         this.distance = game.layout.width / 2 + game.layout.rowMargin + game.layout.cardHeight / 2;
     }else{
@@ -14,8 +15,8 @@ Waste.prototype.adjustPos = function(){
     }
     this.cards.forEach(function(c){
         c.adjustPos();
-    })
-}
+    });
+};
 
 Waste.prototype.getPosFor = function(ind){
     var pos = {
@@ -25,7 +26,7 @@ Waste.prototype.getPosFor = function(ind){
         z: ind + 52
     };
     return pos;
-}
+};
 
 Waste.prototype.addCards = function(cards){
     this.playedBy.score += cards.reduce(function(p, c){
@@ -51,10 +52,10 @@ Waste.prototype.addCards = function(cards){
     var self = this;
     setTimeout(function(){
         self.adjustPos();
-    },300);
-}
+    }, window.isDebug ? 0 : 300);
+};
 
 Waste.prototype.addCard = function(card){
     card.parent = this;
     this.cards.push(card);
-}
+};

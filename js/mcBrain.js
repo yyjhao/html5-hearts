@@ -106,11 +106,11 @@ Simulator.prototype._rollout = function(){
     while(this.curCards[this.nextFirst].length){
         curPlayer = this.nextFirst;
         while(this.curBoard.length < 4){
-            // if(curPlayer === this.curP){
-            //     this._play(curPlayer, this._iDecide(this.curCards[curPlayer]));
-            // }else{
+            if(curPlayer === this.curP){
+                this._play(curPlayer, this._iDecide(this.curCards[curPlayer]));
+            }else{
                 this._play(curPlayer, this._othersDecide(this.curCards[curPlayer]));
-            // }
+            }
             curPlayer++;
             curPlayer %= 4;
         }
@@ -119,13 +119,17 @@ Simulator.prototype._rollout = function(){
 };
 
 Simulator.prototype._endRound = function(){
+    var len = this.curCards[0].length;
+    for(var i = 1; i < 4; i++){
+        if(len != this.curCards[i].length) throw "what!";
+    }
     var curSuit = cardsInfo[this.curBoard[0]].suit,
         maxCard = 0,
         maxNum = cardsInfo[this.curBoard[0]].num,
         i,
         score = 0;
 
-    for(i = 1; i < 4; i++){
+    for(i = 0; i < 4; i++){
         var c = cardsInfo[this.curBoard[i]];
         if(c.suit === curSuit && c.num > maxNum){
             maxNum = c.num;
@@ -133,7 +137,7 @@ Simulator.prototype._endRound = function(){
         }
 
         if(c.suit === 1) score += 1;
-        if(c.suit === 0 && c.num === 12) score += 13;
+        if(c.suit === 0 && c.num === 11) score += 13;
     }
 
     if(this.curPlayers[maxCard] === this.curP){
@@ -146,61 +150,66 @@ Simulator.prototype._endRound = function(){
 };
 
 Simulator.prototype._othersDecide = function(cards){
-    var vc = this._getValidCards(cards);
-    return vc[Math.floor(vc.length * Math.random())];
+    var vc = this._getValidCards(cards),
+    // return vc[Math.floor(vc.length * Math.random())];
     // var vc = this.user.getValidCards(),
-    //     len = vc.length,
-    //     suit = -1, maxNum = -1;
+        len = vc.length,
+        suit = -1, maxNum = -1,
+        board = this.curBoard;
 
-    // if(board.length){
-    //     suit = board[0].suit;
-    //     maxNum = board.reduce(function(prev, cur){
-    //         if(cur.suit === suit && cur.num > prev){
-    //             return cur.num;
-    //         }else{
-    //             return prev;
-    //         }
-    //     }, 0);
-    //     return vc.reduce(function(prev, cur){
-    //         if(prev.suit === cur.suit){
-    //             if(cur.suit === suit){
-    //                 if(cur.num < maxNum){
-    //                     if(prev.num > maxNum || prev.num < cur.num) return cur;
-    //                     else return prev;
-    //                 }else if(cur.num > maxNum && prev.num > maxNum && board.length === 3){
-    //                     if(cur.num > prev.num) return cur;
-    //                     else return prev;
-    //                 }else if(cur.num < prev.num){
-    //                     return cur;
-    //                 }else{
-    //                     return prev;
-    //                 }
-    //             }else{
-    //                 if(cur.num > prev.num) return cur;
-    //                 else return prev;
-    //             }
-    //         }else{
-    //             if(cur.suit === 0 && cur.num === 11) return cur;
-    //             if(prev.suit === 0 && prev.num === 11) return prev;
-    //             if(cur.suit === 1) return cur;
-    //             if(prev.suit === 1) return prev;
-    //             if(cur.num > prev.num) return cur;
-    //             return prev;
-    //         }
-    //     }).ind;
-    // }else{
-    //     return vc.reduce(function(prev, cur){
-    //         if(prev.num > cur.num) return cur;
-    //         else return prev;
-    //     }).ind;
-    // }
+    if(board.length){
+        suit = cardsInfo[board[0]].suit;
+        maxNum = board.reduce(function(prev, curc){
+            var cur = cardsInfo[curc];
+            if(cur.suit === suit && cur.num > prev){
+                return cur.num;
+            }else{
+                return prev;
+            }
+        }, 0);
+        return vc.reduce(function(prevc, curc){
+            var cur = cardsInfo[curc],
+                prev = cardsInfo[prevc];
+            if(prev.suit === cur.suit){
+                if(cur.suit === suit){
+                    if(cur.num < maxNum){
+                        if(prev.num > maxNum || prev.num < cur.num) return curc;
+                        else return prevc;
+                    }else if(cur.num > maxNum && prev.num > maxNum && board.length === 3){
+                        if(cur.num > prev.num) return curc;
+                        else return prevc;
+                    }else if(cur.num < prev.num){
+                        return curc;
+                    }else{
+                        return prevc;
+                    }
+                }else{
+                    if(cur.num > prev.num) return curc;
+                    else return prevc;
+                }
+            }else{
+                if(cur.suit === 0 && cur.num === 11) return curc;
+                if(prev.suit === 0 && prev.num === 11) return prevc;
+                if(cur.suit === 1) return curc;
+                if(prev.suit === 1) return prevc;
+                if(cur.num > prev.num) return curc;
+                return prevc;
+            }
+        });
+    }else{
+        return vc.reduce(function(prev, cur){
+            if(cardsInfo[prev].num > cardsInfo[cur].num) return cur;
+            else return prev;
+        });
+    }
 };
 
 
-Simulator.prototype._iDecide = function(cards){
-    var vc = this._getValidCards(cards);
-    return vc[Math.floor(vc.length * Math.random())];
-};
+// Simulator.prototype._iDecide = function(cards){
+//     var vc = this._getValidCards(cards);
+//     return vc[Math.floor(vc.length * Math.random())];
+// };
+Simulator.prototype._iDecide = Simulator.prototype._othersDecide;
 
 var McBrain = function(user){
     Brain.call(this, user);
@@ -235,6 +244,10 @@ var McBrain = function(user){
     for(var i = 0; i < 52; i++){
         this.remainingCards.push(i);
     }
+
+    this.cardLackCount = cardsInfo.map(function(){
+        return 0;
+    });
 
     this.simulator = new Simulator();
 };
@@ -274,10 +287,12 @@ McBrain.prototype.watch = function(info){
         if(game.board.desk.cards.length){
             var curSuit = game.board.desk.cards[0].suit;
             if(curSuit !== info.card.suit){
-                var lackCardPlayer = this.playersInfo[info.player.id];
+                var lackCardPlayer = this.playersInfo[info.player.id],
+                    cardLackCount = this.cardLackCount;
                 this.remainingCards.forEach(function(c){
                     if(cardsInfo[c].suit === curSuit){
                         lackCardPlayer.lackCard[c] = true;
+                        cardLackCount[c]++;
                     }
                 });
             }
@@ -294,23 +309,21 @@ McBrain.prototype.decide = function(board){
         r = vc[0];
     }else{
 
-        var samples = 20,
+        var samples = 500,
             pids = game.board.desk.players.map(function(p){ return p.id; }),
             cids = game.board.desk.cards.map(function(p){ return p.id; });
         var scores = vc.map(function(c){
             return 0;
         });
         var i;
+        this.preGenSample();
         while(samples--){
             this.genSample();
-            for(var tries = 0; tries < 20; tries++){
-                for(i = 0; i < vc.length; i++){
-                    scores[i] += this.simulator.run(pids, cids, game.isHeartBroken(), this.samplePlayers, vc[i].id, this.user.id);
-                }
+            for(i = 0; i < vc.length; i++){
+                scores[i] += this.simulator.run(pids, cids, game.isHeartBroken(), this.samplePlayers, vc[i].id, this.user.id);
             }
             // alert(samples);
         }
-        console.log(scores);
 
         var minScore = 1/0, bestC;
         for(i = 0; i < scores.length; i++){
@@ -320,6 +333,8 @@ McBrain.prototype.decide = function(board){
             }
         }
         r = vc[bestC];
+
+        // console.log(minScore, bestC, scores, vc);
     }
 
     removeFromUnorderedArray(this.samplePlayers[this.user.id], r.id);
@@ -327,12 +342,19 @@ McBrain.prototype.decide = function(board){
     return r.ind;
 };
 
+McBrain.prototype.preGenSample = function(){
+    var cardLackCount = this.cardLackCount;
+    this.remainingCards.sort(function(a, b){
+        return cardLackCount[b] - cardLackCount[a];
+    });
+};
+
 McBrain.prototype.genSample = function(){
     var id = this.user.id,
         sample = this.samplePlayers,
         playersInfo = this.playersInfo;
 
-    var tryT = 50;
+    var tryT = 1000, ind;
     while(tryT--){
         sample.forEach(function(p, ind){
             if(ind !== id){
@@ -346,7 +368,7 @@ McBrain.prototype.genSample = function(){
         var toAdd = sample.filter(function(s, ind){
             return s.length < playersInfo[ind].numCards;
         });
-        var ind = 0;
+        ind = 0;
         var sum = 0;
         var summ = 0;
         toAdd.forEach(function(to){
@@ -384,8 +406,13 @@ McBrain.prototype.genSample = function(){
             break;
         }
     }
-    if(tryT === 0){
+    if(tryT === -1){
         alert("fail to gen sample");
     }
-    console.log(tryT);
+    if(sample.some(function(s, ind){
+        return s.length !== playersInfo[ind].numCards;
+    })){
+        console.log(this.remainingCards.length, sample, playersInfo, tryT);
+        throw "eh";
+    }
 };

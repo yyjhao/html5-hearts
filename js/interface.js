@@ -40,7 +40,7 @@ window.onload = function(){
 		$('#control-region')[0].hidden = false;
 	};
 	setTimeout(function(){
-		if(game.storage.last){
+		if(false && game.storage.last){
 			game.load();
 			//game.createNew();
 		}else{

@@ -14,19 +14,21 @@ var Player = function(id){
             return this._score;
         },
         set: function(v){
-            if(v > this._score){
-                var b = this.board.scoretext.classList;
-                b.add('highlight');
-                setTimeout(function(){
-                    b.remove('highlight');
-                },100);
+            if(!window.isDebug){
+                if(v > this._score){
+                    var b = this.board.scoretext.classList;
+                    b.add('highlight');
+                    setTimeout(function(){
+                        b.remove('highlight');
+                    },100);
+                }
+                if(game.getRounds() > 0){
+                    this.board.scoretext.innerHTML = this._oldScore + '+' + v;
+                }else{
+                    this.board.scoretext.innerHTML = v;
+                }
             }
             this._score = v;
-            if(game.getRounds() > 0){
-                this.board.scoretext.innerHTML = this._oldScore + '+' + v;
-            }else{
-                this.board.scoretext.innerHTML = v;
-            }
         }
     });
     Object.defineProperty(this, 'name', {
@@ -35,7 +37,9 @@ var Player = function(id){
         },
         set: function(v){
             this._name = v;
-            this.board.nametext.innerHTML = v;
+            if(!window.isDebug){
+                this.board.nametext.innerHTML = v;
+            }
         }
     });
     Object.defineProperty(this, 'oldScore', {
@@ -44,7 +48,9 @@ var Player = function(id){
         },
         set: function(v){
             this._oldScore = v;
-            this.board.finaltext.innerHTML = v;
+            if(!window.isDebug){
+                this.board.finaltext.innerHTML = v;
+            }
         }
     });
 };
@@ -53,6 +59,10 @@ Player.prototype.initForNewRound = function(){
     this.score = 0;
     this.row.cards = [];
     this.waste.cards = [];
+
+    if(this.id === 1) this.brain = new McBrain(this);
+    // else if(this.id === 2) this.brain = new randomBrain(this);
+    else this.brain = new simpleBrain(this);
 };
 
 Player.prototype.next = function(delay){
@@ -60,7 +70,7 @@ Player.prototype.next = function(delay){
     if(delay){
         setTimeout(function(){
             game.proceed();
-        },delay);
+        }, window.isDebug ? 0 : delay);
     }else{
         game.proceed();
     }
@@ -166,8 +176,6 @@ Human.prototype.prepareTransfer = function(){
 
 var Ai = function(id){
     Player.call(this, id);
-    if(id === 1) this.brain = new McBrain(this);
-    else this.brain = new simpleBrain(this);
 };
 
 Ai.prototype = Object.create(Player.prototype);
@@ -212,28 +220,32 @@ Ai.prototype.myTurn = function(){
 
 var PlayerBoard = function(id){
     this.id = id;
-    this.display = document.createElement('div');
-    this.display.className = 'info-board';
-    this.nametext = document.createElement('div');
-    this.nametext.className = 'player-name';
-    this.scoretext = document.createElement('div');
-    this.scoretext.className = 'player-score';
-    this.scoretext.innerHTML = 0;
-    this.finaltext = document.createElement('div');
-    this.finaltext.className = 'final-score';
-    this.finaltext.innerHTML = 0;
+    if(!window.isDebug){
+        this.display = document.createElement('div');
+        this.display.className = 'info-board';
+        this.nametext = document.createElement('div');
+        this.nametext.className = 'player-name';
+        this.scoretext = document.createElement('div');
+        this.scoretext.className = 'player-score';
+        this.scoretext.innerHTML = 0;
+        this.finaltext = document.createElement('div');
+        this.finaltext.className = 'final-score';
+        this.finaltext.innerHTML = 0;
 
-    this.display.appendChild(this.nametext);
-    this.display.appendChild(this.scoretext);
-    this.display.appendChild(this.finaltext);
+        this.display.appendChild(this.nametext);
+        this.display.appendChild(this.scoretext);
+        this.display.appendChild(this.finaltext);
+    }
 };
 
 PlayerBoard.prototype.showFinal = function(){
+    if(window.isDebug) return;
     this.display.style.marginLeft = '-55px';
     this.finaltext.classList.add('show');
 };
 
 PlayerBoard.prototype.hideFinal = function(){
+    if(window.isDebug) return;
     this.display.style.marginLeft = '';
     this.finaltext.classList.remove('show');
 };

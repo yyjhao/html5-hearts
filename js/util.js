@@ -3,6 +3,7 @@ var $ = function(query){
 };
 
 var vendorPrefix = (function(){
+    if(window.isDebug) return "";
     var prefixes = ['Moz', 'Webkit', 'O', 'ms'],
         tran = "Transform";
 

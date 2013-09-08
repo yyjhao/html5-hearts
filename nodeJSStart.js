@@ -1,0 +1,3 @@
+var window = {
+    isDebug: true
+};

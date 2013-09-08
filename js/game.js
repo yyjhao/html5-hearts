@@ -6,23 +6,31 @@
         currentPlay = 0,
         players = [],
         rounds = -1,
-        directions = ['left', 'right', 'opposite'];
+        directions = ['left', 'right', 'opposite'],
+        transferred = 0;
 
     game.players = players;
 
     var interface = game.interface = {
-        arrow: document.createElement('div'),
-        button: document.createElement('button'),
-        message: document.createElement('div'),
+        arrow: window.isDebug ? null : document.createElement('div'),
+        button: window.isDebug ? null : document.createElement('button'),
+        message: window.isDebug ? null : document.createElement('div'),
         showMessage: function(msg){
+            if(window.isDebug) {
+                console.log(msg);
+                return;
+            }
             this.message.innerHTML = msg;
             this.message.style.display = 'block';
         },
         hideMessage: function(){
+            if(window.isDebug) {
+                return;
+            }
             this.message.style.display = '';
         },
         playerBoards: [],
-        endMessage: document.createElement('div')
+        endMessage: window.isDebug ? null : document.createElement('div')
     };
 
     var board = game.board = {
@@ -65,6 +73,12 @@
                 }
                 var p = this.players[max],
                     self = this;
+                var nextTime = 600,
+                    time = 800;
+                if(window.isDebug){
+                    nextTime = 0;
+                    time = 0;
+                }
                 setTimeout(function(){
                     currentPlay = p.id;
                     p.waste.addCards(self.cards);
@@ -73,13 +87,13 @@
                     if(players[0].row.cards.length === 0){
                         setTimeout(function(){
                             end();
-                        },600);
+                        },nextTime);
                     }else{
                         setTimeout(function(){
                             proceed();
-                        },600);
+                        },nextTime);
                     }
-                }, 800);
+                }, time);
             }
         }
     };
@@ -94,6 +108,7 @@
         boardHeight: 55,
         boardWidth: 250,
         adjust: function(){
+            if(window.isDebug) return;
             var region = $('#game-region')[0];
             this.width = region.offsetWidth;
             this.height = region.offsetHeight;
@@ -108,11 +123,14 @@
     var proceed = game.proceed = function(){
         ({
             'prepare': function(){
-                [].forEach.call($('.movable'), function(c){
-                    c.classList.remove('movable');
-                })
-                interface.hideMessage();
-                interface.button.classList.remove('show');
+                tester.informNewGame();
+                if(!window.isDebug){
+                    [].forEach.call($('.movable'), function(c){
+                        c.classList.remove('movable');
+                    });
+                    interface.hideMessage();
+                    interface.button.classList.remove('show');
+                }
                 rounds++;
                 players.forEach(function(p){
                     p.initForNewRound();
@@ -131,7 +149,7 @@
                         setTimeout(function(){
                             status = 'start';
                             proceed();
-                        }, 300);
+                        }, window.isDebug ? 0 : 300);
                         return;
                     }
                     players[curI % 4].row.addCard(board.cards[carddeck[curI]]);
@@ -140,7 +158,7 @@
                         var pc = board.cards[carddeck[curI]];
                     }
                     curI++;
-                    setTimeout(move, 10);
+                    setTimeout(move, window.isDebug ? 0 : 10);
                 }
                 curI = 0;
                 var carddeck=[];
@@ -155,41 +173,59 @@
                     carddeck[ran]=carddeck[51-i];
                     carddeck[51 - i]=tmp;
                 }
-                for(i = 51; i >= 0; i--){
-                    var c = board.cards[carddeck[i]].display.style;
-                    c.zIndex = 200 - i * 3;
-                    c[vendorPrefix + 'Transform'] = 'translate3d(-' + (52-i)/4+'px,-' + (52-i)/4 + 'px, -' + i +'px) rotateY(180deg)';
+                if(!window.isDebug){
+                    for(i = 51; i >= 0; i--){
+                        var c = board.cards[carddeck[i]].display.style;
+                        c.zIndex = 200 - i * 3;
+                        c[vendorPrefix + 'Transform'] = 'translate3d(-' + (52-i)/4+'px,-' + (52-i)/4 + 'px, -' + i +'px) rotateY(180deg)';
+                    }
                 }
-                setTimeout(function(){move();}, 300);
+                setTimeout(function(){move();}, window.isDebug ? 0 : 300);
             },
             'start': function(){
                 players.forEach(function(p){
                     p.prepareTransfer();
                 });
+                transferred = 0;
+                if(window.isDebug){
+                    status = 'passing';
+                    currentPlay = 0;
+                    proceed();
+                }
             },
             'passing': function(){
-                if(currentPlay === 0){
-                    status = 'confirming';
-                    players[0].myTurn();
+                if(transferred === 4){
                     players.forEach(function(r){
                         r.row.sort();
                     });
+                    if(window.isDebug){
+                        status = "playing";
+                        currentPlay = board.cards[26].parent.playedBy.id;
+                        setTimeout(proceed, 0);
+                    }else{
+                        status = 'confirming';
+                        players[0].myTurn();
+                    }
                 }else{
                     players[currentPlay].myTurn();
                 }
             },
             'confirming': function(){
-                interface.button.classList.add('show');
+                if(!window.isDebug){
+                    interface.button.classList.add('show');
+                }
                 players[0].row.curShifted = [];
                 players[0].row.adjustPos();
                 currentPlay = board.cards[26].parent.playedBy.id;
                 setTimeout(function(){
                     status = 'playing';
                     proceed();
-                }, 100);
+                }, window.isDebug ? 0 : 100);
             },
             'playing': function(){
-                interface.button.classList.remove('show');
+                if(!window.isDebug){
+                    interface.button.classList.remove('show');
+                }
                 if(board.desk.cards.length === 4){
                     board.desk.score();
                 }else if(players[0].row.curShifted.length === 1){
@@ -203,31 +239,38 @@
                 }
             },
             'allEnd': function(){
-                interface.playerBoards.forEach(function(p){
-                    p.display.style[vendorPrefix + 'Transform'] = "";
-                });
-                interface.endMessage.classList.remove('show');
+                if(!window.isDebug){
+                    interface.playerboards.foreach(function(p){
+                            p.display.style[vendorprefix + 'transform'] = "";
+                    });
+                   interface.endMessage.classList.remove('show');
+                }
                 players.forEach(function(p){
                     p.score = p.oldScore = 0;
                 });
                 rounds = -1;
-                interface.playerBoards.forEach(function(p){
-                    p.hideFinal();
-                    p.display.classList.remove('table');
-                });
+                if(!window.isDebug){
+                    interface.playerBoards.forEach(function(p){
+                        p.hideFinal();
+                        p.display.classList.remove('table');
+                    });
+                }
                 newGame();
             },
             'end': function(){
-                interface.playerBoards.forEach(function(p){
-                    p.hideFinal();
-                    p.display.classList.remove('table');
-                });
+                if(!window.isDebug){
+                    interface.playerBoards.forEach(function(p){
+                        p.hideFinal();
+                        p.display.classList.remove('table');
+                    });
+                }
                 newRound();
             }
         })[status]();
     };
 
     game.informCardOut = function(player, card){
+        tester.log("place", player, card);
         players.forEach(function(p){
             p.watch({
                 type: "out",
@@ -238,21 +281,30 @@
     };
 
     game.init = function(){
-        var frag = document.createDocumentFragment();
+        var frag;
+        if(!window.isDebug){
+            frag = document.createDocumentFragment();
+        }
         var i;
         for(i=0;i<52;i++){
             var c = new Card(i);
             board.cards.push(c);
-            frag.appendChild(c.display);
+            if(!window.isDebug){
+                frag.appendChild(c.display);
+            }
         }
         for(i=0;i<4;i++){
             var b = new PlayerBoard(i);
             interface.playerBoards.push(b);
-            frag.appendChild(b.display);
+            if(!window.isDebug){
+                frag.appendChild(b.display);
+            }
         }
-        interface.playerBoards[0].display.classList.add('human');
+        if(!window.isDebug){
+            interface.playerBoards[0].display.classList.add('human');
+        }
         game.players = players = [
-            new Human(0),
+            window.isDebug ? new Ai(0) : new Human(0),
             new Ai(1),
             new Ai(2),
             new Ai(3)
@@ -261,32 +313,34 @@
             p.name = game.storage.names[ind];
         });
 
-        interface.arrow.innerHTML = "&larr;";
-        interface.arrow.id = 'pass-arrow';
-        interface.arrow.onmouseup = function(){
-            interface.hideMessage();
-            status = 'passing';
-            currentPlay = 0;
-            players[0].transfer(players[0].row.curShifted);
-            this.classList.remove('show');
-        };
+        if(!window.isDebug){
+            interface.arrow.innerHTML = "&larr;";
+            interface.arrow.id = 'pass-arrow';
+            interface.arrow.onmouseup = function(){
+                interface.hideMessage();
+                status = 'passing';
+                currentPlay = 0;
+                players[0].transfer(players[0].row.curShifted);
+                this.classList.remove('show');
+            };
 
-        interface.button.id = 'play-button';
-        interface.button.onmouseup = function(){
-            proceed();
-            this.classList.remove('show');
-        };
+            interface.button.id = 'play-button';
+            interface.button.onmouseup = function(){
+                proceed();
+                this.classList.remove('show');
+            };
 
-        interface.message.id = 'game-message';
+            interface.message.id = 'game-message';
 
-        interface.endMessage.id = 'end-message';
+            interface.endMessage.id = 'end-message';
 
-        frag.appendChild(game.interface.arrow);
-        frag.appendChild(game.interface.button);
-        frag.appendChild(game.interface.message);
-        frag.appendChild(game.interface.endMessage);
+            frag.appendChild(game.interface.arrow);
+            frag.appendChild(game.interface.button);
+            frag.appendChild(game.interface.message);
+            frag.appendChild(game.interface.endMessage);
 
-        $('#game-region')[0].appendChild(frag);
+            $('#game-region')[0].appendChild(frag);
+        }
     };
 
     var end = game.end = function(){
@@ -304,6 +358,9 @@
                 }
             });
         }
+        tester.recordScore(players.map(function(p){
+            return p.score;
+        }));
         players.forEach(function(p){
             p.oldScore += p.score;
         });
@@ -321,32 +378,46 @@
         });
         layout.adjust();
         setTimeout(function(){
-            interface.playerBoards.forEach(function(p){
-                p.showFinal();
-            });
-            if(players.some(function(p){
-                return p.oldScore > 100;
-            })){
-                if(players[0].board.rank === 0){
-                    interface.endMessage.innerHTML = 'You Won!';
-                    interface.endMessage.style.color = 'white';
-                    interface.endMessage.classList.add('show');
-                    game.storage.totalVictory += 1;
-                }else{
-                    interface.endMessage.innerHTML = 'You Lost!';
-                    interface.endMessage.style.color = 'grey';
-                    interface.endMessage.classList.add('show');
-                }
-                status = 'allEnd';
-                game.storage.timesPlay += 1;
+            if(!window.isDebug){
                 interface.playerBoards.forEach(function(p){
-                    p.display.style[vendorPrefix + 'Transform'] =
-                    'translate3d(0, -' + ((layout.boardHeight + 10) * 2 + 40) + 'px, 0)';
+                    p.showFinal();
                 });
             }
-            interface.button.innerHTML = 'Continue';
-            interface.button.classList.add('show');
-        }, 600);
+            if(!window.isDebug){
+                if(players.some(function(p){
+                    return p.oldScore > 100;
+                })){
+                    if(players[0].board.rank === 0){
+                        if(!window.isDebug){
+                            interface.endMessage.innerHTML = 'You Won!';
+                            interface.endMessage.style.color = 'white';
+                            interface.endMessage.classList.add('show');
+                        }
+                        game.storage.totalVictory += 1;
+                    }else{
+                        if(!window.isDebug){
+                            interface.endmessage.innerhtml = 'you lost!';
+                            interface.endmessage.style.color = 'grey';
+                            interface.endMessage.classList.add('show');
+                        }
+                    }
+                    status = 'allEnd';
+                    game.storage.timesPlay += 1;
+                    if(!window.isDebug){
+                        interface.playerBoards.forEach(function(p){
+                            p.display.style[vendorPrefix + 'Transform'] =
+                            'translate3d(0, -' + ((layout.boardHeight + 10) * 2 + 40) + 'px, 0)';
+                        });
+                    }
+                }
+            }
+            if(!window.isDebug){
+                interface.button.innerHTML = 'Continue';
+                interface.button.classList.add('show');
+            }else{
+                setTimeout(proceed, 0);
+            }
+        }, window.isDebug ? 0 : 600);
     };
 
     var newRound = function(){
@@ -354,7 +425,7 @@
         proceed();
     };
     
-    game.newGame = function(){
+    var newGame = game.newGame = function(){
         players.forEach(function(p){
             p.oldScore = 0;
         });
@@ -364,20 +435,20 @@
     };
     
     game.load = function(){
-        game.state.apply();
-        players.forEach(function(p){
-            p.score = p.waste.cards.reduce(function(p, c){
-                if(c.suit === 1){
-                    return p + 1;
-                }else if(c.suit === 0 && c.num === 11){
-                    return p + 13;
-                }else{
-                    return p;
-                }
-            }, 0);
-        });
-        layout.adjust();
-        proceed();
+        // game.state.apply();
+        // players.forEach(function(p){
+        //     p.score = p.waste.cards.reduce(function(p, c){
+        //         if(c.suit === 1){
+        //             return p + 1;
+        //         }else if(c.suit === 0 && c.num === 11){
+        //             return p + 13;
+        //         }else{
+        //             return p;
+        //         }
+        //     }, 0);
+        // });
+        // layout.adjust();
+        // proceed();
     };
 
     game.getStatus = function(){
@@ -401,6 +472,8 @@
     };
 
     game.transfer = function(player, cards){
+        tester.log("transfer", player, cards);
+        transferred++;
         player.out(cards);
         var adds = [1, 3, 2];
         players[(player.id + adds[rounds % 3]) % 4].takeIn(cards);
@@ -409,14 +482,16 @@
     };
 
     game.showPassingMsg = function(){
-        interface.showMessage("Pass three cards to the " + directions[rounds % 3]);
-        [function(){
-            interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(0)';
-        },function(){
-            interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(180deg)';
-        },function(){
-            interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(90deg)';
-        }][rounds % 3]();
+        if(!window.isDebug){
+            interface.showMessage("Pass three cards to the " + directions[rounds % 3]);
+            [function(){
+                interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(0)';
+            },function(){
+                interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(180deg)';
+            },function(){
+                interface.arrow.style[vendorPrefix + 'Transform'] = 'rotate(90deg)';
+            }][rounds % 3]();
+        }
     };
 
     game.informHeartBroken = function(){
