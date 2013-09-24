@@ -2,7 +2,6 @@
 
 var PomDPSimulator = function(id){
     this.observationBuffer = [];
-    this.scoreBuffer = 0;
     this.playerId = id;
     this.tmpVc = [];
 };
@@ -36,9 +35,7 @@ PomDPSimulator.prototype._playCard = function(card) {
                 maxPlayer = player;
             }
         }
-        if(maxPlayer === this.playerId) {
-            this.scoreBuffer += boardScore;
-        }
+        this.state.scores[maxPlayer] += boardScore;
         this.curPlayer = maxPlayer;
         this.state.board.length = 0;
     } else {
@@ -134,7 +131,9 @@ PomDPSimulator.prototype._decide = function(player) {
 PomDPSimulator.prototype.step = function(s, a){
     var players = s.players,
         heartBroken = s.heartBroken,
-        board = s.board;
+        board = s.board,
+        scores = s.scores,
+        oriScore = s.scores[this.playerId];
     this.state = s;
     this.curPlayer = this.playerId;
 
@@ -145,14 +144,27 @@ PomDPSimulator.prototype.step = function(s, a){
         if(toPlay === null) break;
         this._playCard(toPlay);
     }
+    var moonShooter = -1, outputScore = oriScore - this.state.scores[this.playerId];
+    this.state.scores.forEach(function(s, ind){
+        if(s === 26) {
+            moonShooter = ind;
+        }
+    });
+    if(moonShooter !== -1){
+        if (!window.isDebug) console.log(this.state.scores);
+        if(moonShooter === this.playerId){
+            outputScore = oriScore + 26;
+        } else {
+            outputScore = oriScore - 26;
+        }
+    }
     var result = {
         state: s,
         observation: this.observationBuffer.concat([]),
-        score: -this.scoreBuffer
+        score: outputScore
     };
 
     this.observationBuffer.length = 0;
-    this.scoreBuffer = 0;
 
     return result;
 };
@@ -160,7 +172,8 @@ PomDPSimulator.prototype.step = function(s, a){
 PomDPSimulator.prototype.run = function(s){
     var players = s.players,
         heartBroken = s.heartBroken,
-        board = s.board;
+        board = s.board,
+        oriScore = s.scores[this.playerId];
     this.state = s;
     this.curPlayer = this.playerId;
     
@@ -169,10 +182,19 @@ PomDPSimulator.prototype.run = function(s){
         if(toPlay === null) break;
         this._playCard(toPlay);
     }
-    var result = -this.scoreBuffer;
+    var moonShooter = -1, outputScore = oriScore - this.state.scores[this.playerId];
+    this.state.scores.forEach(function(s, ind){
+        if(s === 26) moonShooter = ind;
+    });
+    if(moonShooter !== -1){
+        if(moonShooter === this.playerId){
+            outputScore = oriScore + 26;
+        } else {
+            outputScore = oriScore - 26;
+        }
+    }
 
     this.observationBuffer.length = 0;
-    this.scoreBuffer = 0;
 
-    return result;
+    return outputScore;
 };

@@ -1,7 +1,7 @@
 "use strict";
 
 var PomDPBrain = function(user, c){
-    this.c = c || 75;
+    this.c = c || 10;
     this.user = user;
     this.ind = user.id;
     this.simulator = new PomDPSimulator(user.id);
@@ -18,22 +18,26 @@ var PomDPBrain = function(user, c){
                 {
                     hasCards: [],
                     lackCard: {},
-                    numCards: 13
+                    numCards: 13,
+                    score: 0
                 },
                 {
                     hasCards: [],
                     lackCard: {},
-                    numCards: 13
+                    numCards: 13,
+                    score: 0
                 },
                 {
                     hasCards: [],
                     lackCard: {},
-                    numCards: 13
+                    numCards: 13,
+                    score: 0
                 },
                 {
                     hasCards: [],
                     lackCard: {},
-                    numCards: 13
+                    numCards: 13,
+                    score: 0
                 }
             ],
             remainingCards: remainingCards,
@@ -48,7 +52,7 @@ var PomDPBrain = function(user, c){
 PomDPBrain.prototype = Object.create(Brain.prototype);
 
 PomDPBrain.prototype.search = function(){
-    var times = 5000;
+    var times = 500;
     while(times--){
         var state = this.genSample(this.root);
         this.simulate(state, this.root, 0);
@@ -78,9 +82,9 @@ PomDPBrain.prototype.search = function(){
 };
 
 PomDPBrain.prototype.rollout = function(s, h, depth){
-    h.count++;
+    // h.count++;
     var val = this.simulator.run(s);
-    h.value = ((h.count - 1) * h.value + val) / h.count;
+    // h.value = ((h.count - 1) * h.value + val) / h.count;
     return val;
 };
 
@@ -162,7 +166,8 @@ PomDPBrain.prototype.initObservation = function(history, observation){
             return {
                 hasCards: [].concat(info.hasCards),
                 lackCard: Object.create(info.lackCard),
-                numCards: info.numCards
+                numCards: info.numCards,
+                score: info.score
             };
         }),
         remainingCards = [].concat(pinfo.remainingCards),
@@ -196,8 +201,18 @@ PomDPBrain.prototype.initObservation = function(history, observation){
             }
         }
         curBoard.push(ob);
-        var maxNum = -1, maxPlayer = 0;
         if(curBoard.length === 4){
+            var maxNum = -1, maxPlayer = 0, boardScore = 0;
+            for(var i = 0; i < 4; i++){
+                var bcard = cardsInfo[curBoard[i] % 100];
+                if(bcard.suit === curSuit && bcard.num > maxNum){
+                    maxPlayer = ((curBoard[i] / 100) | 0) - 1;
+                    maxNum = bcard.num;
+                }
+                if(bcard.suit === 1) boardScore++;
+                else if(bcard.suit === 0 && bcard.num === 11) boardScore += 13;
+            }
+            playersInfo[maxPlayer].score += boardScore;
             curBoard.length = 0;
         }
     }.bind(this));
@@ -223,7 +238,8 @@ PomDPBrain.prototype.initAction = function(history, action){
             return {
                 hasCards: [].concat(info.hasCards),
                 lackCard: Object.create(info.lackCard),
-                numCards: info.numCards
+                numCards: info.numCards,
+                score: info.score
             };
         }),
         remainingCards = [].concat(info.remainingCards),
@@ -353,8 +369,10 @@ PomDPBrain.prototype.genSample = function(node){
     })){
         throw "eh";
     }
+    if(tryT < 900) console.log("Try", tryT);
     return {
         players: sample,
+        scores: node.info.playersInfo.map(function(info){ return info.score; }),
         board: node.info.curBoard.concat([]),
         heartBroken: node.info.heartBroken
     };
