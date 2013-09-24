@@ -61,8 +61,8 @@ Player.prototype.initForNewRound = function(){
     this.waste.cards = [];
 
     // if(this.id % 2 === 1) this.brain = new McBrain(this);
-    // if(this.id === 1) this.brain = new McBrain(this);
-    if(this.id === 1) this.brain = new PomDPBrain(this);
+    if(this.id === 0) this.brain = new McBrain(this);
+    else if(this.id === 1) this.brain = new PomDPBrain(this);
     // else if(this.id === 2) this.brain = new randomBrain(this);
     else this.brain = new simpleBrain(this);
 };

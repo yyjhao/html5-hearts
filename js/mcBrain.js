@@ -299,21 +299,24 @@ McBrain.prototype.decide = function(board){
         r = vc[0];
     }else{
 
-        var samples = 500,
+        var samples = 0,
             pids = game.board.desk.players.map(function(p){ return p.id; }),
-            cids = game.board.desk.cards.map(function(p){ return p.id; });
+            cids = game.board.desk.cards.map(function(p){ return p.id; }),
+            endTime = Date.now() + 1000 * 1;
         var scores = vc.map(function(c){
             return 0;
         });
         var i;
         this.preGenSample();
-        while(samples--){
+        while(Date.now() < endTime){
+            samples++;
             this.genSample();
             for(i = 0; i < vc.length; i++){
                 scores[i] += this.simulator.run(pids, cids, game.isHeartBroken(), this.samplePlayers, vc[i].id, this.user.id);
             }
             // alert(samples);
         }
+        if(!window.isDebug) console.log("Generate", samples);
 
         var minScore = 1/0, bestC;
         for(i = 0; i < scores.length; i++){

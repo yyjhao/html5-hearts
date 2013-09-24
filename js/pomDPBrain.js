@@ -52,11 +52,15 @@ var PomDPBrain = function(user, c){
 PomDPBrain.prototype = Object.create(Brain.prototype);
 
 PomDPBrain.prototype.search = function(){
-    var times = 500;
-    while(times--){
+    // var times = 500;
+    var endTime = Date.now() + 1000 * 1;
+    var times = 0;
+    while(Date.now() < endTime){
         var state = this.genSample(this.root);
         this.simulate(state, this.root, 0);
+        times++;
     }
+    if(!window.isDebug) console.log("Simulate", times);
     var actions = Object.keys(this.root.actions).map(function(a) { return parseInt(a, 10); }),
         gameactions = this.user.getValidCards().map(function(v){ return v.id; });
 
