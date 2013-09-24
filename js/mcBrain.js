@@ -5,8 +5,6 @@ var Simulator = function(){
     this.heartBroken = false;
     this.curP = 0;
 
-    this.score = 0;
-
     this.tmpVc = [];
 };
 
@@ -26,11 +24,21 @@ Simulator.prototype.run = function(curPlayers, curBoard, heartBroken, curCards, 
 
     this.curP = myID;
 
-    this.score = 0;
+    this.scores = game.players.map(function(p){ return p.score; });
     this._play(myID, cardToPlay);
     this._rollout();
 
-    return this.score;
+    var moonShooter = -1;
+    this.scores.forEach(function(s, ind){
+        if(s === 26) moonShooter = ind;
+    });
+
+    if(moonShooter !== -1){
+        if(moonShooter === this.curP) return -26;
+        else return 26;
+    }
+
+    return this.scores[this.curP];
 };
 
 Simulator.prototype._play = function(player, card){
@@ -123,9 +131,7 @@ Simulator.prototype._endRound = function(){
         if(c.suit === 0 && c.num === 11) score += 13;
     }
 
-    if(this.curPlayers[maxCard] === this.curP){
-        this.score += score;
-    }
+    this.scores[this.curPlayers[maxCard]] += score;
 
     this.nextFirst = this.curPlayers[maxCard];
     this.curBoard.length = 0;
@@ -203,22 +209,26 @@ var McBrain = function(user){
         {
             hasCard: [],
             lackCard: {},
-            numCards: 13
+            numCards: 13,
+            score: 0
         },
         {
             hasCard: [],
             lackCard: {},
-            numCards: 13
+            numCards: 13,
+            score: 0
         },
         {
             hasCard: [],
             lackCard: {},
-            numCards: 13
+            numCards: 13,
+            score: 0
         },
         {
             hasCard: [],
             lackCard: {},
-            numCards: 13
+            numCards: 13,
+            score: 0
         }
     ];
 

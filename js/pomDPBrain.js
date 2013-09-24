@@ -217,6 +217,9 @@ PomDPBrain.prototype.initObservation = function(history, observation){
         }
     }.bind(this));
     info.heartBroken = heartBroken;
+    remainingCards.sort(function(a, b){
+        return cardLackCount[b] - cardLackCount[a];
+    });
 
     var terminate = !playersInfo.some(function(p){
         return p.numCards > 0;
