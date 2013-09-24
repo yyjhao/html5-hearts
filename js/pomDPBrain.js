@@ -1,7 +1,7 @@
 "use strict";
 
 var PomDPBrain = function(user, c){
-    this.c = c || 0.9;
+    this.c = c || 75;
     this.user = user;
     this.ind = user.id;
     this.simulator = new PomDPSimulator(user.id);
@@ -56,7 +56,7 @@ PomDPBrain.prototype.search = function(){
     var actions = Object.keys(this.root.actions).map(function(a) { return parseInt(a, 10); }),
         gameactions = this.user.getValidCards().map(function(v){ return v.id; });
 
-    console.log(actions, this.user.getValidCards());
+    if(!window.isDebug) console.log(actions, this.user.getValidCards());
 
     actions.forEach(function(a){
         if(gameactions.indexOf(a) === -1) throw "mismatch " + a;
@@ -64,16 +64,17 @@ PomDPBrain.prototype.search = function(){
     });
     if(gameactions.length) throw "mismatch " + gameactions.join(" ");
 
-    var best = 0;
+    var best = -1/0,
+        bestAction = 0;
     for(var a in this.root.actions){
         if(this.root.actions[a].value > best){
             best = this.root.actions[a].value;
-            best = a;
+            bestAction = a;
         }
     }
-    console.log(this.root);
-    this.root = this.root.actions[a];
-    return a;
+    if(!window.isDebug) console.log(this.root);
+    this.root = this.root.actions[bestAction];
+    return bestAction;
 };
 
 PomDPBrain.prototype.rollout = function(s, h, depth){
@@ -103,7 +104,8 @@ PomDPBrain.prototype.simulate = function(s, h, depth){
         }
     }
     if(!best){
-        console.log(h);
+        if(window.isDebug) console.log(JSON.stringify(h, null, "    "));
+        else console.log(h);
         throw "eh";
     }
 
@@ -144,9 +146,11 @@ PomDPBrain.prototype.getAllActions = function(history){
     }else if (info.heartBroken) {
         return [].concat(info.playersInfo[this.ind].hasCards);
     } else {
-        return info.playersInfo[this.ind].hasCards.filter(function(c){
+        var possible = info.playersInfo[this.ind].hasCards.filter(function(c){
             return cardsInfo[c].suit !== 1;
         });
+        if(possible.length) return possible;
+        else return [].concat(info.playersInfo[this.ind].hasCards);
     }
 };
 
@@ -171,7 +175,6 @@ PomDPBrain.prototype.initObservation = function(history, observation){
         cardLackCount: cardLackCount,
         remainingCards: remainingCards
     };
-    var score = 0, me = this.ind;
     observation.forEach(function(ob){
         var pid = ((ob / 100) | 0) - 1;
         playersInfo[pid].numCards--;
@@ -193,23 +196,8 @@ PomDPBrain.prototype.initObservation = function(history, observation){
             }
         }
         curBoard.push(ob);
-        var maxNum = -1, maxPlayer = 0, boardScore = 0;
+        var maxNum = -1, maxPlayer = 0;
         if(curBoard.length === 4){
-            for(var i = 0; i < 4; i++){
-                var card = cardsInfo[curBoard[i] % 100];
-                if(card.suit === curSuit && card.num > maxNum){
-                    maxNum = card.num;
-                    maxPlayer = ((curBoard[i] / 100) | 0) - 1;
-                }
-                if(card.suit === 1){
-                    boardScore += 1;
-                } else if (card.suit === 0 && card.num === 11) {
-                    boardScore += 13;
-                }
-            }
-            if(maxPlayer === me) {
-                score += boardScore;
-            }
             curBoard.length = 0;
         }
     }.bind(this));
@@ -220,7 +208,6 @@ PomDPBrain.prototype.initObservation = function(history, observation){
     });
 
     return {
-        score: score,
         info: info,
         count: 0,
         value: 0,
@@ -298,7 +285,7 @@ PomDPBrain.prototype.decide = function(board){
             return vc[i].ind;
         }
     }
-    console.log(vc, action);
+    if(!window.isDebug) console.log(vc, action);
     throw "failed to find card, something must be of wrongness";
 };
 
