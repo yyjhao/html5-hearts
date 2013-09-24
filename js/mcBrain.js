@@ -1,20 +1,3 @@
-var cardsInfo = [];
-
-for(var i = 0; i < 52; i++){
-    cardsInfo.push({
-        num: i % 13 + 1,
-        suit: i % 4
-    });
-}
-
-function infoToCardId(num, suit){
-    var r = num - 1;
-    while(r % 4 !== suit){
-        r += 13;
-    }
-    return r;
-}
-
 var Simulator = function(){
     this.curCards = [[], [], [], []];
     this.curPlayers = [];
@@ -151,11 +134,10 @@ Simulator.prototype._endRound = function(){
 
 Simulator.prototype._othersDecide = function(cards){
     var vc = this._getValidCards(cards),
-    // return vc[Math.floor(vc.length * Math.random())];
-    // var vc = this.user.getValidCards(),
         len = vc.length,
         suit = -1, maxNum = -1,
         board = this.curBoard;
+    // return vc[Math.floor(vc.length * Math.random())];
 
     if(board.length){
         suit = cardsInfo[board[0]].suit;
@@ -254,19 +236,18 @@ var McBrain = function(user){
 
 McBrain.prototype = Object.create(Brain.prototype);
 
-function removeFromUnorderedArray(arr, item){
-    if(!arr.length) return;
-    var ind = arr.indexOf(item);
-    if(ind === -1) return;
-    arr[ind] = arr[arr.length - 1];
-    arr.pop();
-}
-
 McBrain.prototype.removeRemainingCard = function(id){
     removeFromUnorderedArray(this.remainingCards, id);
     this.playersInfo.forEach(function(p){
         removeFromUnorderedArray(p.hasCard, id);
     });
+};
+
+McBrain.prototype.markLackCard = function(c, player){
+    if(!player.lackCard[c]){
+        player.lackCard[c] = true;
+        this.cardLackCount[c]++;
+    }
 };
 
 McBrain.prototype.watch = function(info){
@@ -284,15 +265,14 @@ McBrain.prototype.watch = function(info){
     }else{
         this.playersInfo[info.player.id].numCards--;
         this.removeRemainingCard(info.card.id);
+        var markLackCard = this.markLackCard.bind(this),
+            lackCardPlayer = this.playersInfo[info.player.id];
         if(game.board.desk.cards.length){
             var curSuit = game.board.desk.cards[0].suit;
             if(curSuit !== info.card.suit){
-                var lackCardPlayer = this.playersInfo[info.player.id],
-                    cardLackCount = this.cardLackCount;
                 this.remainingCards.forEach(function(c){
                     if(cardsInfo[c].suit === curSuit){
-                        lackCardPlayer.lackCard[c] = true;
-                        cardLackCount[c]++;
+                        markLackCard(c, lackCardPlayer);
                     }
                 });
             }
@@ -354,7 +334,7 @@ McBrain.prototype.genSample = function(){
         sample = this.samplePlayers,
         playersInfo = this.playersInfo;
 
-    var tryT = 1000, ind;
+    var tryT = 1000000, ind;
     while(tryT--){
         sample.forEach(function(p, ind){
             if(ind !== id){
@@ -407,6 +387,7 @@ McBrain.prototype.genSample = function(){
         }
     }
     if(tryT === -1){
+        console.log(this.remainingCards, this.playersInfo);
         alert("fail to gen sample");
     }
     if(sample.some(function(s, ind){

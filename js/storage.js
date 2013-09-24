@@ -67,7 +67,7 @@ var storeSetup = {
 	last: 'false'
 };
 
-if(window.isDebug){
+if(true || window.isDebug){
 	window.game.storage = storeSetup;
 }else{
 	(function(obj, storages){
@@ -76,7 +76,7 @@ if(window.isDebug){
 				localStorage['yyjhao.hearts.' + name] = def;
 			}
 			(function(obj, name){
-				var str = localStorage['yyjhao.hearts.' + name]
+				var str = localStorage['yyjhao.hearts.' + name];
 				obj['_' + name] = str ? JSON.parse(str) : str;
 				Object.defineProperty(obj, name,{
 					get: function(){
