@@ -9,7 +9,7 @@ cat js/brain.js >> bashTest.js
 cat js/prematureOptimization.js >> bashTest.js
 cat js/simpleBrain.js >> bashTest.js
 cat js/mcBrain.js >> bashTest.js
-cat js/pomDPSimulator.js >> bashTest.js
+cat js/PomDPSimulator.js >> bashTest.js
 cat js/pomDPBrain.js >> bashTest.js
 cat js/player.js >> bashTest.js
 cat js/game.js >> bashTest.js
