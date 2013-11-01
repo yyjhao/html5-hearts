@@ -445,7 +445,6 @@ td[contentEditable]{
 }
 
 .final-score.show{
-	margin-left: 10px;
 	width: 90px;
 	padding: 10px;
 	padding-bottom: 8px;
@@ -454,7 +453,6 @@ td[contentEditable]{
 
 .player-score{
 	margin-left: 0;
-	margin-right: 0;
 	-webkit-transition: background 5s;
 	-moz-transition: background 5s;
 	-ms-transition: background 5s;
