@@ -68,6 +68,7 @@ var storeSetup = {
 };
 
 if(true || window.isDebug){
+	storeSetup.names = JSON.parse(storeSetup.names);
 	window.game.storage = storeSetup;
 }else{
 	(function(obj, storages){
