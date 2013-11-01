@@ -82,8 +82,6 @@ td[contentEditable]{
 }
 
 .player-set-name{
-	width: 150px;
-	max-width: 150px;
 	word-wrap: normal;
 	overflow: hidden; 
 }

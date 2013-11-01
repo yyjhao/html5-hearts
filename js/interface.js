@@ -11,7 +11,6 @@ window.onload = function(){
 	$('#settings-but')[0].onclick = function(){
 		var nums = ['one', 'two', 'three', 'four'];
 		$('#settings-dialog')[0].hidden = false;
-		$('#stats-dialog')[0].hidden = true;
 		config.names.forEach(function(n,ind){
 			$('.player-set-name.' + nums[ind])[0].innerHTML = n;
 		});
