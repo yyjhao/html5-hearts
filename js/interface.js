@@ -48,11 +48,3 @@ window.onload = function(){
 		}
 	},0);
 };
-
-// window.onunload = function(){
-// 	if(game.status === 'preparing'){
-// 		game.storage.last = false;
-// 	}else{
-// 		game.state.save();
-// 	}
-// };

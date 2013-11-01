@@ -1,4 +1,3 @@
-
 var Player = function(id){
     this.row = new Row(id);
     this.row.playedBy = this;
@@ -64,7 +63,7 @@ Player.prototype.initForNewRound = function(){
     if(this.id === 2) this.brain = new McBrain(this);
     else if(this.id === 1) this.brain = new PomDPBrain(this);
     // else if(this.id === 2) this.brain = new randomBrain(this);
-    else this.brain = new simpleBrain(this);
+    else this.brain = new SimpleBrain(this);
 };
 
 Player.prototype.next = function(delay){

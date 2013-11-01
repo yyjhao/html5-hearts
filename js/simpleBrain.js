@@ -1,10 +1,10 @@
-var simpleBrain = function(user){
+var SimpleBrain = function(user){
     Brain.call(this, user);
 };
 
-simpleBrain.prototype = Object.create(Brain.prototype);
+SimpleBrain.prototype = Object.create(Brain.prototype);
 
-simpleBrain.prototype.decide = function(board){
+SimpleBrain.prototype.decide = function(board){
     var vc = this.user.getValidCards(),
         len = vc.length,
         suit = -1, maxNum = -1;
