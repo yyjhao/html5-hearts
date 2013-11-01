@@ -310,7 +310,7 @@
             new Ai(3)
         ];
         players.forEach(function(p, ind){
-            p.name = game.storage.names[ind];
+            p.name = config.names[ind];
         });
 
         if(!window.isDebug){
@@ -344,9 +344,6 @@
     };
 
     var end = game.end = function(){
-        if(players[0].score === 26){
-            game.storage.totalSTM += 1;
-        }
         if(players.some(function(p){
             return p.score === 26;
         })){
@@ -364,8 +361,6 @@
         players.forEach(function(p){
             p.oldScore += p.score;
         });
-        game.storage.totalScore += players[0].score;
-        game.storage.roundsPlayed += 1;
         status = 'end';
         var rank = players.map(function(c){
             return c;
@@ -393,7 +388,6 @@
                             interface.endMessage.style.color = 'white';
                             interface.endMessage.classList.add('show');
                         }
-                        game.storage.totalVictory += 1;
                     }else{
                         if(!window.isDebug){
                             interface.endmessage.innerhtml = 'you lost!';
@@ -402,7 +396,6 @@
                         }
                     }
                     status = 'allEnd';
-                    game.storage.timesPlay += 1;
                     if(!window.isDebug){
                         interface.playerBoards.forEach(function(p){
                             p.display.style[vendorPrefix + 'Transform'] =
