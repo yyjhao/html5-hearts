@@ -1,3 +1,3 @@
-var config = {
+define({
     names: ["Chakravartin", "Octavian", "Antony", "Lepidus"]
-};
+});

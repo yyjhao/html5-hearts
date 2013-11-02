@@ -1,25 +1,35 @@
-var cardsInfo = [];
+define(function(){
+    "use strict";
 
-for(var i = 0; i < 52; i++){
-    cardsInfo.push({
-        num: i % 13 + 1,
-        suit: i % 4
-    });
-}
+    var cardsInfo = [];
 
-function infoToCardId(num, suit){
-    var r = num - 1;
-    while(r % 4 !== suit){
-        r += 13;
+    for(var i = 0; i < 52; i++){
+        cardsInfo.push({
+            num: i % 13 + 1,
+            suit: i % 4
+        });
     }
-    return r;
-}
 
-function removeFromUnorderedArray(arr, item){
-    // console.trace();
-    if(!arr.length) return;
-    var ind = arr.indexOf(item);
-    if(ind === -1) return;
-    arr[ind] = arr[arr.length - 1];
-    arr.pop();
-}
+    function infoToCardId(num, suit){
+        var r = num - 1;
+        while(r % 4 !== suit){
+            r += 13;
+        }
+        return r;
+    }
+
+    function removeFromUnorderedArray(arr, item){
+        // console.trace();
+        if(!arr.length) return;
+        var ind = arr.indexOf(item);
+        if(ind === -1) return;
+        arr[ind] = arr[arr.length - 1];
+        arr.pop();
+    }
+
+    return {
+        cardsInfo: cardsInfo,
+        infoToCardId: infoToCardId,
+        removeFromUnorderedArray: removeFromUnorderedArray
+    };
+});

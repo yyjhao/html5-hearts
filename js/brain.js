@@ -1,17 +1,12 @@
-var Brain = function(user){
-    this.user = user;
-    this.playerInfo = [[], [], [], []];
-};
+define(function(){
+    "use strict";
 
-Brain.prototype.watch = function(info){};
+    var Brain = function(user){
+        this.user = user;
+        this.playerInfo = [[], [], [], []];
+    };
 
-var RandomBrain = function(user){
-    Brain.call(this, user);
-};
+    Brain.prototype.watch = function(info){};
 
-RandomBrain.prototype = Object.create(Brain.prototype);
-
-RandomBrain.prototype.decide = function(board){
-    var vc = this.user.getValidCards();
-    return vc[Math.floor(Math.random() * vc.length)].ind;
-};
+    return Brain;
+});

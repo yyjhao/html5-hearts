@@ -495,3 +495,57 @@
         layout.adjust();
     };
 })();
+
+// if(!window.isDebug){
+//             this.display = document.createElement('div');
+//             this.display.className = 'card flipped';
+//             this.display.style[vendorPrefix + 'Transform'] = 'rotateY(180deg)';
+
+//             var numText = document.createElement('div');
+//             numText.className = 'num';
+//             numText.innerHTML = numtext;
+
+//             this.front = document.createElement('div');
+//             this.front.className = 'front';
+//             this.front.appendChild(numText);
+//             this.display.classList.add(suits[this.suit]);
+
+//             var icon = document.createElement('div');
+//             icon.className = 'icon';
+//             this.front.appendChild(icon);
+
+//             this.display.appendChild(this.front);
+
+//             this.back = document.createElement('div');
+//             this.back.className = 'back';
+
+//             this.display.appendChild(this.back);
+//         }
+
+ // Card.prototype.flip = function(flipped){
+ //        if(flipped != this.flipped){
+ //            this.flipped = flipped;
+ //            if(flipped){
+ //                this.rotateY = 180;
+ //                if(!window.isDebug) this.display.classList.add('flipped');
+ //            }else{
+ //                this.rotateY = 0;
+ //                if(!window.isDebug) this.display.classList.remove('flipped');
+ //            }
+ //        }
+ //    };
+
+ // Card.prototype.adjustDisplay = function(){
+ //        if(window.isDebug) return;
+ //        this.display.style.zIndex = this.pos.z;
+ //        this.display.style[vendorPrefix + 'Transform'] =
+ //            'rotate(' + this.pos.rotation + 'deg) translate3d(' +
+ //                this.pos.x + 'px,' + this.pos.y + 'px, 0) ' +
+ //                'rotateY(' + this.rotateY +'deg)';
+ //    };
+
+ 
+    // Card.prototype.out = function(){
+    //     this.display.style[vendorPrefix + 'Transform'] =
+    //         'rotate(' + this.pos.rotation + ')';
+    // };
