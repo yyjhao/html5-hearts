@@ -1,4 +1,5 @@
-define(function(){
+define(["layout"],
+function(layout){
     "use strict";
 
     var Row = function(id){
@@ -14,41 +15,18 @@ define(function(){
         card.parent = this;
         card.ind = this.cards.length;
         this.cards.push(card);
-        card.flip(this.flipped);
-        if(!window.isDebug && !this.flipped){
+        if(!this.flipped){
             card.display.onmouseup = card.shift(card);
         }
     };
 
     Row.prototype.adjustPos = function(){
-        if(window.isDebug) return;
         if(this.isVertical){
-            this.distance = game.layout.width / 2 - game.layout.rowMargin - game.layout.cardHeight / 2;
-            this.playedBy.board.display.style.top = game.layout.height / 2 - game.layout.boardHeight / 2 + 'px';
-            if(this.id === 1){
-                this.playedBy.board.display.style.left = game.layout.rowMargin * 1.5 + 'px';
-            }else{
-                this.playedBy.board.display.style.left = game.layout.width - game.layout.rowMargin * 1.5 - game.layout.boardWidth + 'px';
-            }
+            this.distance = layout.width / 2 - layout.rowMargin - layout.cardHeight / 2;
         }else{
-            this.distance = game.layout.height / 2 - game.layout.rowMargin - game.layout.cardHeight / 2;
-            this.playedBy.board.display.style.left = game.layout.width / 2 - game.layout.boardWidth / 2 + 'px';
-            if(this.id === 0){
-                this.playedBy.board.display.style.top = game.layout.height - 30 - game.layout.rowMargin * 1.5 - game.layout.boardHeight - game.layout.cardHeight + 'px';
-            }else{
-                this.playedBy.board.display.style.top = 30 + game.layout.rowMargin * 1.5 + 'px';
-            }
+            this.distance = layout.height / 2 - layout.rowMargin - layout.cardHeight / 2;
         }
-        this.left = -((this.cards.length - 1) * game.layout.cardSep) / 2;
-        this.playedBy.board.display.classList.remove('table');
-        if(game.getStatus() === 'end'){
-            var top = game.layout.height / 2 - 2 * (game.layout.boardHeight + 10),
-                left = game.layout.width / 2 - game.layout.boardWidth / 2;
-            var b = this.playedBy.board;
-            b.display.style.top = top + b.rank * (game.layout.boardHeight + 10) + 'px';
-            b.display.style.left = left + 'px';
-            b.display.classList.add('table');
-        }
+        this.left = -((this.cards.length - 1) * layout.cardSep) / 2;
         this.cards.forEach(function(c){
             c.adjustPos();
         });
@@ -56,9 +34,10 @@ define(function(){
 
     Row.prototype.getPosFor = function(ind){
         var pos = {
-            x: this.left + ind * game.layout.cardSep,
+            x: this.left + ind * layout.cardSep,
             y: this.distance,
             rotation: this.rotation,
+            rotateY: this.flipped ? 180 : 0,
             z: ind
         };
         if(this.curShifted.indexOf(this.cards[ind]) > -1){

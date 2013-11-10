@@ -1,5 +1,5 @@
-define(["Player"],
-function(Player){
+define(["Player", "jquery"],
+function(Player,  $){
     "use strict";
 
     var Ai = function(id){
@@ -9,27 +9,25 @@ function(Player){
     Ai.prototype = Object.create(Player.prototype);
 
     Ai.prototype.prepareTransfer = function(){
-        var select = [], cards = [];
-        while(select.length < 3){
+        var selected = [], cards = [];
+        while(selected.length < 3){
             var s = Math.floor(Math.random() * this.row.cards.length);
-            if(select.indexOf(s) === -1){
-                select.push(s);
+            if(selected.indexOf(s) === -1){
+                selected.push(s);
             }
         }
         for(var i = 0; i < 3; i++){
-            cards.push(this.row.cards[select[i]]);
+            cards.push(this.row.cards[selected[i]]);
         }
-        this.myTurn = function(){
-            this.transfer(cards);
-            delete this.myTurn;
-        };
+        this.selected = selected;
+        return $.Deferred.resolve();
     };
 
-    Ai.prototype.transfer = function(cards){
-        var to = Player.prototype.transfer.call(this,cards);
+    Ai.prototype.transferTo = function(other){
+        Player.prototype.transferTo.call(this, other);
         this.brain.watch({
             type: "in",
-            player: game.players[to],
+            player: other,
             cards: cards
         });
     };
@@ -38,12 +36,8 @@ function(Player){
         this.brain.watch(info);
     };
 
-    Ai.prototype.myTurn = function(){
-        var ind = this.brain.decide(game.board.desk.cards);
-        var card = this.row.cards[ind];
-        this.row.hideOut(ind);
-        game.informCardOut(this, card);
-        this.next(500);
+    Ai.prototype.decide = function(board){
+        return this.brain.decide(board);
     };
 
     return Ai;

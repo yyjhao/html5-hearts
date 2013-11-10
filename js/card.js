@@ -1,9 +1,10 @@
-define(function(){
+define(["domBinding"],
+function(domBinding){
     "use strict";
 
     var suits = ['spade', 'heart', 'club', 'diamond'];
 
-    var Card = function(id, game){
+    var Card = function(id){
         this.id = id;
         this.num = id % 13 + 1;
         this.suit = id % 4;
@@ -19,25 +20,14 @@ define(function(){
                 14: 'A'
             })[acutualNum];
         }
-        this.display = game.createCardDisplay(numtext, this.suit);
+        this.display = domBinding.createCardDisplay(numtext, this.suit);
      };
 
     Card.suits = suits;
 
-    Card.prototype.flip = function(flipped){
-        if(flipped != this.flipped){
-            this.flipped = flipped;
-            if(flipped){
-                this.display.flip();
-            }else{
-                this.display.unflip();
-            }
-        }
-    };
-
     Card.prototype.adjustPos = function(time){
         this.pos = this.parent.getPosFor(this.ind);
-        this.display.adjust(this.pos);
+        this.display.adjustPos(this.pos);
     };
 
     Card.prototype.shift = function(par){

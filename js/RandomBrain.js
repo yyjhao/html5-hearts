@@ -1,4 +1,4 @@
-defind(["Brain"],
+define(["Brain"],
 function(Brain){
     "use strict";
 
