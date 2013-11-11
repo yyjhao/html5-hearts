@@ -381,7 +381,7 @@ td[contentEditable]{
 
 .info-board{
 	position: absolute;
-	z-index: 300;
+	z-index: 200;
 	display: inline-block;
 	background: rgba(0, 0, 0, 0.8);
 	box-shadow: 0 0 10px black;

@@ -16,9 +16,6 @@ function(layout){
         card.parent = this;
         card.ind = this.cards.length;
         this.cards.push(card);
-        if(!this.flipped){
-            card.display.onmouseup = card.shift(card);
-        }
     };
 
     Row.prototype.getSelected = function(){

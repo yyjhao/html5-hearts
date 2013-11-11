@@ -53,6 +53,11 @@ function(Player,  $,         ui){
         ui.hideButton();
     };
 
+    Human.prototype.initForNewRound = function(){
+        Player.prototype.initForNewRound.call(this);
+        this.row.curShifted = [];
+    };
+
     Human.prototype.prepareTransfer = function(dir){
         ui.showPassingScreen(dir);
         this.row.cards.forEach(function(c){

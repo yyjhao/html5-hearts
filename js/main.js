@@ -5,8 +5,8 @@ require.config({
     }
 });
 
-require(["game", "jquery", "domBinding", "layout"],
-function(game,    $,        domBinding,   layout){
+require(["game", "jquery", "domBinding", "layout", "config"],
+function(game,    $,        domBinding,   layout,   config){
     "use strict";
 
     layout.region = $('#game-region')[0];
