@@ -24,7 +24,7 @@ function(Player,  $){
     };
 
     Ai.prototype.confirmTransfer = function(){
-        return $.Deferred().resolve();
+        return this.brain.confirmCards();
     };
 
     Ai.prototype.transferTo = function(other){

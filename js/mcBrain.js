@@ -5,8 +5,8 @@ function( Simulator ,  Brain,   op){
     var cardsInfo = op.cardsInfo;
     var removeFromUnorderedArray = op.removeFromUnorderedArray;
 
-    var McBrain = function(user){
-        Brain.call(this, user);
+    var McBrain = function(userid){
+        Brain.call(this, userid);
 
         this.samplePlayers = [[], [], [], []];
         this.tmpSample = [[], [], [], []];
@@ -71,18 +71,16 @@ function( Simulator ,  Brain,   op){
     McBrain.prototype.watch = function(info){
         if(info.type === "in"){
             info.cards.forEach(function(c){
-                this.removeRemainingCard(c.id);
+                this.removeRemainingCard(c);
             }.bind(this));
-            [].push.apply(this.playersInfo[info.player.id].hasCard, info.cards.map(function(c){
-                return c.id;
-            }));
+            [].push.apply(this.playersInfo[info.player].hasCard, info.cards);
         }else{
-            this.playersInfo[info.player.id].numCards--;
-            this.removeRemainingCard(info.card.id);
-            if(info.card.suit === 1) this.heartBroken = true;
+            this.playersInfo[info.player].numCards--;
+            this.removeRemainingCard(info.card);
+            if(cardsInfo[info.card].suit === 1) this.heartBroken = true;
             var markLackCard = this.markLackCard.bind(this),
-                lackCardPlayer = this.playersInfo[info.player.id];
-            if(info.curSuit !== info.card.suit){
+                lackCardPlayer = this.playersInfo[info.player];
+            if(info.curSuit !== cardsInfo[info.card].suit){
                 this.remainingCards.forEach(function(c){
                     if(cardsInfo[c].suit === info.curSuit){
                         markLackCard(c, lackCardPlayer);
@@ -92,14 +90,14 @@ function( Simulator ,  Brain,   op){
         }
     };
 
-    McBrain.prototype.decide = function(vc, boardCards, boardPlayers, pscores){
-        if(!this.knowSelf){
-            this.user.row.cards.forEach(function(c){
-                this.removeRemainingCard(c.id);
-                this.samplePlayers[this.user.id].push(c.id);
-            }.bind(this));
-            this.knowSelf = true;
-        }
+    McBrain.prototype.confirmCards = function(cards){
+        cards.forEach(function(c){
+            this.removeRemainingCard(c);
+            this.samplePlayers[this.user].push(c);
+        }.bind(this));
+    };
+
+    McBrain.prototype.decide = function(vc, cids, pids, pscores){
         var r;
 
         if(vc.length === 1){
@@ -107,9 +105,7 @@ function( Simulator ,  Brain,   op){
         }else{
 
             var samples = 0,
-                pids = boardPlayers.map(function(p){ return p.id; }),
-                cids = boardCards.map(function(p){ return p.id; }),
-                endTime = Date.now() + 1000 * 1;
+                endTime = Date.now() + 1500 * 1;
             var scores = vc.map(function(c){
                 return 0;
             });
@@ -125,7 +121,7 @@ function( Simulator ,  Brain,   op){
                         this.heartBroken,
                         this.samplePlayers,
                         vc[i].id,
-                        this.user.id,
+                        this.user,
                         [].concat(pscores));
                 }
                 // alert(samples);
@@ -143,9 +139,9 @@ function( Simulator ,  Brain,   op){
             // console.log(minScore, bestC, scores, vc);
         }
 
-        removeFromUnorderedArray(this.samplePlayers[this.user.id], r.id);
+        removeFromUnorderedArray(this.samplePlayers[this.user], r.id);
 
-        return $.Deferred().resolve(r.ind);
+        return r.ind;
     };
 
     McBrain.prototype.preGenSample = function(){
@@ -156,7 +152,7 @@ function( Simulator ,  Brain,   op){
     };
 
     McBrain.prototype.genSample = function(){
-        var id = this.user.id,
+        var id = this.user,
             sample = this.samplePlayers,
             playersInfo = this.playersInfo;
 

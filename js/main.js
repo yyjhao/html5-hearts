@@ -1,11 +1,10 @@
-require.config({
+require({
     baseUrl: 'js',
     paths: {
         jquery: 'lib/jquery-2.0.3.min'
     }
-});
-
-require(["game", "jquery", "domBinding", "layout", "config"],
+},
+        ["game", "jquery", "domBinding", "layout", "config"],
 function(game,    $,        domBinding,   layout,   config){
     "use strict";
 

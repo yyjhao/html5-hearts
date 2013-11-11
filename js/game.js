@@ -1,5 +1,5 @@
-define(["ui", "Human", "Ai", "board", "config", "jquery", "rules", "RandomBrain", "McBrain", "SimpleBrain", "PomDPBrain"],
-function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,   McBrain,   SimpleBrain,   PomDPBrain){
+define(["ui", "Human", "Ai", "board", "config", "jquery", "rules", "RandomBrain", "AsyncBrain", "SimpleBrain", "PomDPBrain"],
+function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,   AsyncBrain,   SimpleBrain,   PomDPBrain){
     "use strict";
 
     var rounds = 0;
@@ -17,10 +17,15 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
     var heartBroken = false;
 
     var initBrains = function(){
-        players[0].brain = new McBrain(players[0]);
-        players[1].brain = new McBrain(players[1]);
-        players[2].brain = new McBrain(players[2]);
-        players[3].brain = new McBrain(players[3]);
+        players[0].brain = new AsyncBrain(players[0], "McBrain");
+        players[1].brain = new AsyncBrain(players[1], "McBrain");
+        players[2].brain = new AsyncBrain(players[2], "McBrain");
+        players[3].brain = new AsyncBrain(players[3], "McBrain");
+
+        return $.when(players[0].brain.init(),
+                      players[1].brain.init(),
+                      players[2].brain.init(),
+                      players[3].brain.init());
     };
 
     var informCardOut = function(player, card){
@@ -98,19 +103,20 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     players.forEach(function(p){
                         p.initForNewRound();
                     });
-                    initBrains();
                     board.init();
                     heartBroken = false;
                     board.shuffleDeck();
                     var self = this;
-                    setTimeout(function(){
-                        board.distribute(players).done(function(){
-                            players.forEach(function(p){
-                                p.row.sort();
+                    initBrains().done(function(){
+                        setTimeout(function(){
+                            board.distribute(players).done(function(){
+                                players.forEach(function(p){
+                                    p.row.sort();
+                                });
+                                self.next();
                             });
-                            self.next();
-                        });
-                    }, 300);
+                        }, 300);
+                    });
                 },
                 'start': function(){
                     rounds++;
