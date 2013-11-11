@@ -25,6 +25,7 @@ function(Player,  $,         ui){
         var row = this.row;
         ui.buttonClickOnce(function(){
             ui.hideMessage();
+            ui.hideButton();
             d.resolve(row.getSelected()[0]);
         });
         return d;
@@ -33,6 +34,7 @@ function(Player,  $,         ui){
     Human.prototype.doneTransfer = function(){
         this.row.curShifted = [];
         this.row.adjustPos();
+        ui.hideButton();
     };
 
     Human.prototype.prepareTransfer = function(){
