@@ -15,6 +15,9 @@ define(function(){
         if(!pos.rotation){
             pos.rotation = 0;
         }
+        if(!pos.rotateY){
+            pos.rotateY = 0;
+        }
         this.dom.css({
             zIndex: 200 - pos.z,
             transform: 'rotate(' + pos.rotation + 'deg) translate3d(' + pos.x + 'px, ' + pos.y + 'px, ' + pos.z + 'px) rotateY(' + pos.rotateY + 'deg)'

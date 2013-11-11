@@ -26,8 +26,8 @@ function(domBinding){
 
     Card.suits = suits;
 
-    Card.prototype.adjustPos = function(time){
-        this.pos = this.parent.getPosFor(this.ind);
+    Card.prototype.adjustPos = function(noUpdate){
+        if(!noUpdate) this.pos = this.parent.getPosFor(this.ind);
         this.display.adjustPos(this.pos);
     };
 

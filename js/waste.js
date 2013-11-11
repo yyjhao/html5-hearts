@@ -1,17 +1,18 @@
-define(function(){
-    var Waste = function(id){
+define(['layout'],
+function(layout){
+    var Waste = function(id, player){
         this.id = id;
         this.isVertical = id % 2;
         this.rotation = 90 * ((id + 1) % 4) -90;
         this.cards = [];
+        this.playedBy = player;
     };
 
     Waste.prototype.adjustPos = function(){
-        if(window.isDebug) return;
         if(this.isVertical){
-            this.distance = game.layout.width / 2 + game.layout.rowMargin + game.layout.cardHeight / 2;
+            this.distance = layout.width / 2 + layout.rowMargin + layout.cardHeight / 2;
         }else{
-            this.distance = game.layout.height / 2 + game.layout.rowMargin + game.layout.cardHeight / 2;
+            this.distance = layout.height / 2 + layout.rowMargin + layout.cardHeight / 2;
         }
         this.cards.forEach(function(c){
             c.adjustPos();
@@ -23,7 +24,8 @@ define(function(){
             x: 0,
             y: this.distance,
             rotation: this.rotation,
-            z: ind + 52
+            z: ind + 52,
+            rotateY: 0
         };
         return pos;
     };
@@ -38,25 +40,27 @@ define(function(){
                 return p;
             }
         }, 0);
+        var finalCard;
         for(var i = 0; i < cards.length; i++){
             if(cards[i].pos.rotation === this.rotation){
                 cards[i].pos.z = 104;
-                var finalCard = cards[i];
+                finalCard = cards[i];
             }else{
                 cards[i].pos.rotation = this.rotation;
                 this.addCard(cards[i]);
             }
-            cards[i].adjustDisplay();
+            cards[i].adjustPos(true);
         }
         this.addCard(finalCard);
         var self = this;
         setTimeout(function(){
             self.adjustPos();
-        }, window.isDebug ? 0 : 300);
+        }, 300);
     };
 
     Waste.prototype.addCard = function(card){
         card.parent = this;
+        card.ind = this.cards.length;
         this.cards.push(card);
     };
 

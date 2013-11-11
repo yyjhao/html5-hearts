@@ -38,7 +38,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
         adjustLayout: function(){
             players.forEach(function(r){
                 r.row.adjustPos();
-                // r.waste.adjustPos();
+                r.waste.adjustPos();
             });
             board.desk.adjustPos();
         },
@@ -54,9 +54,6 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
             console.log(status, "next");
             if (status == 'confirming'){
                 currentPlay = board.cards[26].parent.playedBy.id;
-                if(currentPlay === 0){
-                    ui.showMessage('Please start with 2 of Clubs.');
-                }
                 played = 0;
             } else if (status == 'playing'){
                 currentPlay = (currentPlay + 1) % 4;
@@ -78,7 +75,11 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     'end': 'prepare'
                 })[status];
             }
-            var wait = status === 'playing' ? 300 : 0;
+            var waitTime = {
+                'playing': 300,
+                'endRound': 900
+            };
+            var wait = waitTime[status] || 0;
             setTimeout(this.proceed.bind(this), wait);
         },
         proceed: function(){
@@ -96,6 +97,9 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     var self = this;
                     setTimeout(function(){
                         board.distribute(players).done(function(){
+                            players.forEach(function(p){
+                                p.row.sort();
+                            });
                             self.next();
                         });
                     }, 300);
@@ -137,8 +141,9 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     }.bind(this));
                 },
                 'endRound': function(){
-                    var score = board.desk.score();
-                    currentPlay = score[0];
+                    var info = board.desk.score();
+                    currentPlay = info[0].id;
+                    info[0].waste.addCards(info[1]);
                     this.next();
                 },
                 'allEnd': function(){

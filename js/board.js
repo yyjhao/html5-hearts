@@ -40,7 +40,9 @@ function(Card,  $,         layout){
             var d = $.Deferred();
             function move(){
                 if(curI === cards.length){
-                    d.resolve();
+                    setTimeout(function(){
+                        d.resolve();
+                    }, 200);
                     return;
                 }
                 players[curI % 4].row.addCard(cards[carddeck[curI]]);
@@ -62,6 +64,7 @@ function(Card,  $,         layout){
         desk: {
             cards: [],
             players: [],
+            curScore: 0,
             getPosFor: function(ind){
                 var pos = {
                     x: 0,
@@ -86,7 +89,7 @@ function(Card,  $,         layout){
             score: function(){
                 var max = 0;
                 for(var i = 1; i < 4; i++){
-                    if( this.cards[i].suit === this.cards[max].suit && (this.cards[i].num > this.cards[max].num)){
+                    if(this.cards[i].suit === this.cards[max].suit && (this.cards[i].num > this.cards[max].num)){
                         max = i;
                     }
                 }
@@ -98,21 +101,11 @@ function(Card,  $,         layout){
                     nextTime = 0;
                     time = 0;
                 }
-                setTimeout(function(){
-                    currentPlay = p.id;
-                    p.waste.addCards(self.cards);
-                    self.players = [];
-                    self.cards = [];
-                    if(players[0].row.cards.length === 0){
-                        setTimeout(function(){
-                            end();
-                        },nextTime);
-                    }else{
-                        setTimeout(function(){
-                            proceed();
-                        },nextTime);
-                    }
-                }, time);
+                var info = [this.players[max], [].concat(this.cards)];
+                this.players.length = 0;
+                this.cards.length = 0;
+
+                return info;
             }
         }
     };
