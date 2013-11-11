@@ -93,9 +93,7 @@ function( Simulator ,  Brain){
         }
     };
 
-    McBrain.prototype.decide = function(board){
-        var vc = this.user.getValidCards();
-
+    McBrain.prototype.decide = function(vc, board){
         var r;
 
         if(vc.length === 1){

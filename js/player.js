@@ -1,5 +1,5 @@
-define(["Row", "Waste", "RandomBrain", "domBinding"],
-function(Row ,  Waste,   RandomBrain,   domBinding){
+define(["Row", "Waste", "domBinding"],
+function(Row ,  Waste,   domBinding){
     "use strict";
 
     var Player = function(id, name){
@@ -33,7 +33,7 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
         // else if(this.id === 1) this.brain = new PomDPBrain(this);
         // else if(this.id === 2) this.brain = new randomBrain(this);
         // else this.brain = new SimpleBrain(this);
-        this.brain = new RandomBrain();
+        // this.brain = new RandomBrain();
     };
 
     Player.prototype.out = function(outCards){

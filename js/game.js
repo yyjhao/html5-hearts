@@ -1,10 +1,10 @@
-define(["ui", "Human", "Ai", "board", "config", "jquery", "rules"],
-function(ui,   Human,   Ai,   board,   config,   $,        rules){
+define(["ui", "Human", "Ai", "board", "config", "jquery", "rules", "RandomBrain", "McBrain", "SimpleBrain", "PomDPBrain"],
+function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,   McBrain,   SimpleBrain,   PomDPBrain){
     "use strict";
 
     var rounds = 0;
     var players = [
-        new Human(0, config.names[0]),
+        new Ai(0, config.names[0]),
         new Ai(1, config.names[1]),
         new Ai(2, config.names[2]),
         new Ai(3, config.names[3])
@@ -15,6 +15,13 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
         played = 0;
 
     var heartBroken = false;
+
+    var initBrains = function(){
+        players[0].brain = new SimpleBrain();
+        players[1].brain = new SimpleBrain();
+        players[2].brain = new SimpleBrain();
+        players[3].brain = new SimpleBrain();
+    };
 
     var informCardOut = function(player, card){
         if(card.suit === 1){
@@ -76,8 +83,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                 })[status];
             }
             var waitTime = {
-                'playing': 300,
-                'endRound': 900
+                'playing': 10,
+                'endRound': 10
             };
             var wait = waitTime[status] || 0;
             setTimeout(this.proceed.bind(this), wait);
@@ -90,6 +97,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     players.forEach(function(p){
                         p.initForNewRound();
                     });
+                    initBrains();
                     board.init();
                     heartBroken = false;
                     board.shuffleDeck();
@@ -127,7 +135,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     players[currentPlay].decide(
                         rules.getValidCards(players[currentPlay].row.cards,
                                             board.desk.cards[0] ? board.cards[0].suit : -1,
-                                            heartBroken))
+                                            heartBroken), board.desk.cards)
                     .done(function(card){
                         card.parent.out(card);
                         board.desk.addCard(card, players[currentPlay]);
@@ -147,7 +155,6 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     players.forEach(function(p){
                         p.clearScore();
                     });
-                    rounds = -1;
                     ui.showWinner();
                 },
                 'end': function(){

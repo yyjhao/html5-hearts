@@ -40,8 +40,8 @@ function(Player,  $){
         this.brain.watch(info);
     };
 
-    Ai.prototype.decide = function(validCards){
-        return this.brain.decide(validCards).then(function(c){
+    Ai.prototype.decide = function(validCards, boardCards){
+        return this.brain.decide(validCards, boardCards).then(function(c){
             return this.row.cards[c];
         }.bind(this));
     };
