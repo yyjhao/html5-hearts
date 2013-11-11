@@ -5,6 +5,7 @@ function(Player,  $,         ui){
     var Human = function(id, name){
         Player.call(this, id, name);
         this.row.flipped = false;
+        this.display.setHuman(true);
     };
 
     Human.prototype = Object.create(Player.prototype);
@@ -26,8 +27,23 @@ function(Player,  $,         ui){
         ui.buttonClickOnce(function(){
             ui.hideMessage();
             ui.hideButton();
+            validCards.forEach(function(c){
+                c.display.setSelectable(false);
+            });
             d.resolve(row.getSelected()[0]);
         });
+        return d;
+    };
+
+    Human.prototype.confirmTransfer = function(){
+        ui.showButton("Confirm");
+        ui.hideArrow();
+        ui.hideMessage();
+        var d = $.Deferred();
+        ui.buttonClickOnce(function(){
+            this.doneTransfer();
+            d.resolve();
+        }.bind(this));
         return d;
     };
 
@@ -37,7 +53,8 @@ function(Player,  $,         ui){
         ui.hideButton();
     };
 
-    Human.prototype.prepareTransfer = function(){
+    Human.prototype.prepareTransfer = function(dir){
+        ui.showPassingScreen(dir);
         this.row.cards.forEach(function(c){
             c.display.setSelectable(true);
         });

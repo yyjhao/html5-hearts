@@ -25,6 +25,8 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
         this._score = 0;
         this.row.cards = [];
         this.waste.cards = [];
+        this.display.rank = null;
+        this.display.adjustPos();
 
         // if(this.id % 2 === 1) this.brain = new McBrain(this);
         // if(this.id === 2) this.brain = new McBrain(this);
@@ -55,6 +57,12 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
     Player.prototype.setScore = function(val){
         this._score = val;
         this.display.setScoreText(this._oldScore + " + " + this._score);
+    };
+
+    Player.prototype.finalizeScore = function(){
+        this._oldScore += this._score;
+        this._score = 0;
+        this.display.setFinalText(this._oldScore);
     };
 
     Player.prototype.incrementScore = function(val){

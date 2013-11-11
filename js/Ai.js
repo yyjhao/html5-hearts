@@ -23,6 +23,10 @@ function(Player,  $){
         return $.Deferred().resolve();
     };
 
+    Ai.prototype.confirmTransfer = function(){
+        return $.Deferred().resolve();
+    };
+
     Ai.prototype.transferTo = function(other){
         Player.prototype.transferTo.call(this, other);
         this.brain.watch({

@@ -37,7 +37,7 @@ define(function(){
     };
 
 
-    var PlayerDisplay = function(id, name){
+    var PlayerDisplay = function(id, name, human){
         this.id = id;
         this.display = document.createElement('div');
         this.display.className = 'info-board board-' + id;
@@ -56,28 +56,47 @@ define(function(){
         this.display.appendChild(this.finaltext);
 
         frag.appendChild(this.display);
+
+        this.rank = null;
     };
 
-    PlayerDisplay.prototype.showFinal = function(){
-        this.display.style.marginLeft = '-55px';
-        this.finaltext.classList.add('show');
-    };
 
-    PlayerDisplay.prototype.hideFinal = function(){
-        this.display.style.marginLeft = '';
-        this.finaltext.classList.remove('show');
+    PlayerDisplay.prototype.setHuman = function(yes){
+        if(yes){
+            this.display.className += " human";
+        }
     };
 
     PlayerDisplay.prototype.adjustPos = function(){
         var d = $(this.display);
-        d.css({
-            marginLeft: -d.width() / 2,
-            marginTop: -d.height() / 2
-        });
+        if(this.rank === null){
+            var adjust = this.finaltext.classList.contains("show") ? 55 : 0;
+            this.finaltext.classList.remove('show');
+            d.css({
+                marginLeft: -d.width() / 2 + adjust,
+                marginTop: -d.height() / 2,
+                transform: "",
+                top: "",
+                left: ""
+            }).removeClass("table");
+        } else {
+            this.finaltext.classList.add('show');
+            d.css({
+                top: "50%",
+                left: "50%",
+                marginLeft: -d.width() / 2 - 55,
+                marginTop: -d.height() / 2,
+                transform: "translateY(" + ((1.2 * d.height()) * (this.rank - 2)) + "px)"
+            }).addClass("table");
+        }
     };
 
     PlayerDisplay.prototype.setScoreText = function(text){
         this.scoretext.innerHTML = text;
+    };
+
+    PlayerDisplay.prototype.setFinalText = function(text){
+        this.finaltext.innerHTML = text;
     };
 
     PlayerDisplay.prototype.highlight = function(){

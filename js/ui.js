@@ -14,6 +14,8 @@ define(function(){
     document.body.appendChild(button);
     document.body.appendChild(message);
 
+
+
     return {
         showArrow: function(){
             arrow.classList.add('show');
@@ -31,28 +33,18 @@ define(function(){
         arrowClickOnce: function(cb){
             $(arrow).on("click", function(){
                 cb();
-                $(this).off("click", cb);
+                $(this).off("click");
             });
         },
         buttonClickOnce: function(cb){
             $(button).on("click", function(){
                 cb();
-                $(this).off("click", cb);
+                $(this).off("click");
             });
         },
         showMessage: function(msg){
             message.innerHTML = msg;
             message.style.display = 'block';
-        },
-        showConfirmScreen: function(){
-            arrow.classList.remove("show");
-            this.showButton("confirm");
-            this.hideMessage();
-            var d = $.Deferred();
-            this.buttonClickOnce(function(){
-                d.resolve();
-            });
-            return d;
         },
         showPassingScreen: function(dir){
             var directions = ['left', 'right', 'opposite'];

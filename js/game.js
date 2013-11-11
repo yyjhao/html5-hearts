@@ -105,9 +105,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                 },
                 'start': function(){
                     rounds++;
-                    ui.showPassingScreen(rounds % 3);
                     $.when.apply($, players.map(function(p){
-                        return p.prepareTransfer();
+                        return p.prepareTransfer(rounds % 3);
                     })).done(this.next.bind(this));
                 },
                 'passing': function(){
@@ -120,11 +119,9 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                     players.forEach(function(r){
                         r.row.sort();
                     });
-                    var self = this;
-                    ui.showConfirmScreen().done(function(){
-                        players[0].doneTransfer();
-                        self.next();
-                    });
+                    $.when.apply($, players.map(function(p){
+                        return p.confirmTransfer();
+                    })).done(this.next.bind(this));
                 },
                 'playing': function(){
                     players[currentPlay].decide(
@@ -165,8 +162,23 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                             }
                         });
                     }
-                    ui.addScore();
-                    ui.showRank().done(this.next.bind(this));
+                    players.forEach(function(p){
+                        p.finalizeScore();
+                    });
+                    var rank = players.map(function(c){
+                        return c;
+                    });
+                    rank.sort(function(a,b){
+                        return a._oldScore - b._oldScore;
+                    });
+                    rank.forEach(function(r,ind){
+                        r.display.rank = ind;
+                    });
+                    players.forEach(function(p){
+                        p.adjustPos();
+                    });
+                    ui.showButton("Continue");
+                    ui.buttonClickOnce(this.next.bind(this));
                 }
             })[status].bind(this)();
         }
