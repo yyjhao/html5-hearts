@@ -17,7 +17,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
     var heartBroken = false;
 
     var initBrains = function(){
-        players[0].brain = new AsyncBrain(players[0], "McBrain");
+        players[0].brain = new AsyncBrain(players[0], "PomDPBrain");
         players[1].brain = new AsyncBrain(players[1], "McBrain");
         players[2].brain = new AsyncBrain(players[2], "McBrain");
         players[3].brain = new AsyncBrain(players[3], "McBrain");

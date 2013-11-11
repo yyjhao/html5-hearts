@@ -9,7 +9,11 @@ define(function(){
     Brain.prototype.watch = function(info){};
 
     Brain.prototype.confirmCards = function(){
-        return $.Deferred().resolve();
+        return {
+            done: function(cb){
+                cb();
+            }
+        };
     };
 
     return Brain;

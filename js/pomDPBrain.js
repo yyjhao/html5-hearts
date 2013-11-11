@@ -8,8 +8,8 @@ function(Brain ,  op                    ,  PomDPSimulator){
     var PomDPBrain = function(user, c){
         this.c = c || 10;
         this.user = user;
-        this.ind = user.id;
-        this.simulator = new PomDPSimulator(user.id);
+        this.ind = user;
+        this.simulator = new PomDPSimulator(user);
         var remainingCards = [];
         for(var i = 0; i < 52; i++){
             remainingCards.push(i);
@@ -58,7 +58,6 @@ function(Brain ,  op                    ,  PomDPSimulator){
 
     PomDPBrain.prototype.search = function(vc){
         // var times = 500;
-        console.log(this.root)
         var endTime = Date.now() + 500 * 1;
         var times = 0;
         while(Date.now() < endTime){
@@ -66,12 +65,10 @@ function(Brain ,  op                    ,  PomDPSimulator){
             this.simulate(state, this.root, 0);
             times++;
         }
-        if(!window.isDebug) console.log("Simulate", times);
         var actions = Object.keys(this.root.actions).map(function(a) { return parseInt(a, 10); }),
             gameactions = vc.map(function(v){ return v.id; });
         actions.forEach(function(a){
             if(gameactions.indexOf(a) === -1){
-                console.log(actions, gameactions);
                 throw "mismatch " + a;
             }
             removeFromUnorderedArray(gameactions, a);
@@ -86,7 +83,6 @@ function(Brain ,  op                    ,  PomDPSimulator){
                 bestAction = a;
             }
         }
-        if(!window.isDebug) console.log(this.root);
         this.root = this.root.actions[bestAction];
         return bestAction;
     };
@@ -118,7 +114,6 @@ function(Brain ,  op                    ,  PomDPSimulator){
             }
         }
         if(!best){
-            console.log(h);
             throw "eh";
         }
 
@@ -282,24 +277,22 @@ function(Brain ,  op                    ,  PomDPSimulator){
     PomDPBrain.prototype.watch = function(info){
         if(info.type === "in"){
             info.cards.forEach(function(c){
-                this.removeRemainingCard(c.id, this.root.info);
+                this.removeRemainingCard(c, this.root.info);
             }.bind(this));
-            [].push.apply(this.root.info.playersInfo[info.player.id].hasCards, info.cards.map(function(c){
-                return c.id;
-            }));
+            [].push.apply(this.root.info.playersInfo[info.player].hasCards, info.cards);
         }else{
-            this.observationBuffer.push(info.card.id + (info.player.id + 1) * 100);
+            this.observationBuffer.push(info.card + (info.player + 1) * 100);
         }
     };
 
+    PomDPBrain.prototype.confirmCards = function(cards){
+        cards.forEach(function(c){
+            this.removeRemainingCard(c, this.root.info);
+            this.root.info.playersInfo[this.ind].hasCards.push(c);
+        }.bind(this));
+    };
+
     PomDPBrain.prototype.decide = function(vc){
-        if(!this.knowSelf){
-            this.user.row.cards.forEach(function(c){
-                this.removeRemainingCard(c.id, this.root.info);
-                this.root.info.playersInfo[this.ind].hasCards.push(c.id);
-            }.bind(this));
-            this.knowSelf = true;
-        }
         if(this.observationBuffer.join("") in this.root){
             this.root = this.root[this.observationBuffer.join("")];
         } else {
@@ -311,10 +304,9 @@ function(Brain ,  op                    ,  PomDPSimulator){
 
         for(var i = 0; i < vc.length; i++){
             if(vc[i].id === action){
-                return $.Deferred().resolve(vc[i].ind);
+                return vc[i].ind;
             }
         }
-        if(!window.isDebug) console.log(vc, action);
         throw "failed to find card, something must be of wrongness";
     };
 
@@ -380,10 +372,8 @@ function(Brain ,  op                    ,  PomDPSimulator){
         if(sample.some(function(s, ind){
             return s.length !== playersInfo[ind].numCards;
         })){
-            console.log(sample, playersInfo);
             throw "eh";
         }
-        if(tryT < 900) console.log("Try", tryT);
         return {
             players: sample,
             scores: node.info.playersInfo.map(function(info){ return info.score; }),
