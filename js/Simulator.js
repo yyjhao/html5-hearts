@@ -1,4 +1,4 @@
-define( ["prematureOptimization"],
+define(["prematureOptimization"],
 function(op){
     "use strict";
 
@@ -16,7 +16,7 @@ function(op){
         this.tmpVc = [];
     };
 
-    Simulator.prototype.run = function(curPlayers, curBoard, heartBroken, curCards, cardToPlay, myID){
+    Simulator.prototype.run = function(curPlayers, curBoard, heartBroken, curCards, cardToPlay, myID, scores){
         this.curCards.forEach(function(t, ind){
             t.length = 0;
             [].push.apply(t, curCards[ind]);
@@ -32,7 +32,7 @@ function(op){
 
         this.curP = myID;
 
-        this.scores = game.players.map(function(p){ return p.score; });
+        this.scores = scores;
         this._play(myID, cardToPlay);
         this._rollout();
 
@@ -120,7 +120,10 @@ function(op){
     Simulator.prototype._endRound = function(){
         var len = this.curCards[0].length;
         for(var i = 1; i < 4; i++){
-            if(len != this.curCards[i].length) throw "what!";
+            if(len != this.curCards[i].length){
+                console.log(this.curCards)
+                throw "what!";
+            }
         }
         var curSuit = cardsInfo[this.curBoard[0]].suit,
             maxCard = 0,

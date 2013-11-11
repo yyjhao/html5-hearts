@@ -17,10 +17,10 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
     var heartBroken = false;
 
     var initBrains = function(){
-        players[0].brain = new SimpleBrain(players[0]);
-        players[1].brain = new SimpleBrain(players[1]);
-        players[2].brain = new SimpleBrain(players[2]);
-        players[3].brain = new SimpleBrain(players[3]);
+        players[0].brain = new McBrain(players[0]);
+        players[1].brain = new McBrain(players[1]);
+        players[2].brain = new McBrain(players[2]);
+        players[3].brain = new McBrain(players[3]);
     };
 
     var informCardOut = function(player, card){
@@ -31,7 +31,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             p.watch({
                 type: "out",
                 player: player,
-                card: card
+                card: card,
+                curSuit: board.desk.cards[0].suit
             });
         });
     };
@@ -135,7 +136,12 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     players[currentPlay].decide(
                         rules.getValidCards(players[currentPlay].row.cards,
                                             board.desk.cards[0] ? board.desk.cards[0].suit : -1,
-                                            heartBroken), board.desk.cards, board.desk.players)
+                                            heartBroken),
+                        board.desk.cards,
+                        board.desk.players,
+                        players.map(function(p){
+                            return p.getScore();
+                        }))
                     .done(function(card){
                         card.parent.out(card);
                         board.desk.addCard(card, players[currentPlay]);

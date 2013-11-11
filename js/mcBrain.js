@@ -1,12 +1,17 @@
-define([ "Simulator", "Brain"],
-function( Simulator ,  Brain){
+define([ "Simulator", "Brain", "prematureOptimization"],
+function( Simulator ,  Brain,   op){
     "use strict";
+
+    var cardsInfo = op.cardsInfo;
+    var removeFromUnorderedArray = op.removeFromUnorderedArray;
 
     var McBrain = function(user){
         Brain.call(this, user);
 
         this.samplePlayers = [[], [], [], []];
         this.tmpSample = [[], [], [], []];
+
+        this.heartBroken = false;
 
         this.playersInfo = [
             {
@@ -71,29 +76,30 @@ function( Simulator ,  Brain){
             [].push.apply(this.playersInfo[info.player.id].hasCard, info.cards.map(function(c){
                 return c.id;
             }));
-            this.user.row.cards.forEach(function(c){
-                this.removeRemainingCard(c.id);
-                this.samplePlayers[this.user.id].push(c.id);
-            }.bind(this));
         }else{
             this.playersInfo[info.player.id].numCards--;
             this.removeRemainingCard(info.card.id);
+            if(info.card.suit === 1) this.heartBroken = true;
             var markLackCard = this.markLackCard.bind(this),
                 lackCardPlayer = this.playersInfo[info.player.id];
-            if(game.board.desk.cards.length){
-                var curSuit = game.board.desk.cards[0].suit;
-                if(curSuit !== info.card.suit){
-                    this.remainingCards.forEach(function(c){
-                        if(cardsInfo[c].suit === curSuit){
-                            markLackCard(c, lackCardPlayer);
-                        }
-                    });
-                }
+            if(info.curSuit !== info.card.suit){
+                this.remainingCards.forEach(function(c){
+                    if(cardsInfo[c].suit === info.curSuit){
+                        markLackCard(c, lackCardPlayer);
+                    }
+                });
             }
         }
     };
 
-    McBrain.prototype.decide = function(vc, board){
+    McBrain.prototype.decide = function(vc, boardCards, boardPlayers, pscores){
+        if(!this.knowSelf){
+            this.user.row.cards.forEach(function(c){
+                this.removeRemainingCard(c.id);
+                this.samplePlayers[this.user.id].push(c.id);
+            }.bind(this));
+            this.knowSelf = true;
+        }
         var r;
 
         if(vc.length === 1){
@@ -101,8 +107,8 @@ function( Simulator ,  Brain){
         }else{
 
             var samples = 0,
-                pids = game.board.desk.players.map(function(p){ return p.id; }),
-                cids = game.board.desk.cards.map(function(p){ return p.id; }),
+                pids = boardPlayers.map(function(p){ return p.id; }),
+                cids = boardCards.map(function(p){ return p.id; }),
                 endTime = Date.now() + 1000 * 1;
             var scores = vc.map(function(c){
                 return 0;
@@ -113,7 +119,14 @@ function( Simulator ,  Brain){
                 samples++;
                 this.genSample();
                 for(i = 0; i < vc.length; i++){
-                    scores[i] += this.simulator.run(pids, cids, game.isHeartBroken(), this.samplePlayers, vc[i].id, this.user.id);
+                    scores[i] += this.simulator.run(
+                        pids,
+                        cids,
+                        this.heartBroken,
+                        this.samplePlayers,
+                        vc[i].id,
+                        this.user.id,
+                        [].concat(pscores));
                 }
                 // alert(samples);
             }
@@ -132,7 +145,7 @@ function( Simulator ,  Brain){
 
         removeFromUnorderedArray(this.samplePlayers[this.user.id], r.id);
 
-        return r.ind;
+        return $.Deferred().resolve(r.ind);
     };
 
     McBrain.prototype.preGenSample = function(){
