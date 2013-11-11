@@ -191,11 +191,11 @@ td[contentEditable]{
 	left: 0;
 	right: 0;
 	background: lightblue;
-	-webkit-perspective: 800px;
-	-moz-perspective: 800px;
-	-ms-perspective: 800px;
-	-o-perspective: 800px;
-	perspective: 800px;
+	-webkit-perspective: 8000px;
+	-moz-perspective: 8000px;
+	-ms-perspective: 8000px;
+	-o-perspective: 8000px;
+	perspective: 8000px;
 	background-image:-webkit-radial-gradient(
 		50% 38%, #53c230, #138300);
 	background-image:-moz-radial-gradient(
@@ -381,23 +381,42 @@ td[contentEditable]{
 
 .info-board{
 	position: absolute;
-	top: -300px;
-	left: 50%;
+	z-index: 300;
 	display: inline-block;
 	background: rgba(0, 0, 0, 0.8);
 	box-shadow: 0 0 10px black;
-	z-index: 100;
 	-webkit-transition-duration: 0.3s;
 	-moz-transition-duration: 0.3s;
 	-ms-transition-duration: 0.3s;
 	-o-transition-duration: 0.3s;
 	transition-duration: 0.3s;
+	-webkit-transform: translateZ(300px);
 	border-radius: 5px;
 	background-image:-webkit-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:-moz-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:-ms-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:-o-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
+}
+
+.info-board.board-0{
+	top: 70%;
+	left: 50%;
+}
+
+.info-board.board-1{
+	left: 15%;
+	top: 50%;
+}
+
+.info-board.board-2{
+	top: 30%;
+	left: 50%;
+}
+
+.info-board.board-3{
+	left: 85%;
+	top: 50%;
 }
 
 .info-board:not(.table):hover{

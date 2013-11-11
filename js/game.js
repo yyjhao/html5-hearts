@@ -4,10 +4,10 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
 
     var rounds = 0;
     var players = [
-        new Human(0, ui),
-        new Ai(1),
-        new Ai(2),
-        new Ai(3)
+        new Human(0, config.names[0]),
+        new Ai(1, config.names[1]),
+        new Ai(2, config.names[2]),
+        new Ai(3, config.names[3])
     ];
 
     var status = "prepare",
@@ -37,8 +37,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
     return {
         adjustLayout: function(){
             players.forEach(function(r){
-                r.row.adjustPos();
-                r.waste.adjustPos();
+                r.adjustPos();
             });
             board.desk.adjustPos();
         },

@@ -9,11 +9,11 @@ require(["game", "jquery", "domBinding", "layout"],
 function(game,    $,        domBinding,   layout){
     "use strict";
 
-    domBinding.fragmentToDom($('#game-region')[0]);
-
     layout.region = $('#game-region')[0];
-
     layout.adjust();
+
+    domBinding.fragmentToDom($('#game-region')[0]);
+    game.adjustLayout();
 
     $(window).resize(function(){
         layout.adjust();

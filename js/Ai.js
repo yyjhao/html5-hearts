@@ -2,8 +2,8 @@ define(["Player", "jquery"],
 function(Player,  $){
     "use strict";
 
-    var Ai = function(id){
-        Player.call(this, id);
+    var Ai = function(id, name){
+        Player.call(this, id, name);
     };
 
     Ai.prototype = Object.create(Player.prototype);

@@ -36,12 +36,55 @@ define(function(){
         return this.dom.is(".movable");
     };
 
+
+    var PlayerDisplay = function(id, name){
+        this.id = id;
+        this.display = document.createElement('div');
+        this.display.className = 'info-board board-' + id;
+        this.nametext = document.createElement('div');
+        this.nametext.className = 'player-name';
+        this.nametext.innerHTML = name;
+        this.scoretext = document.createElement('div');
+        this.scoretext.className = 'player-score';
+        this.scoretext.innerHTML = 0;
+        this.finaltext = document.createElement('div');
+        this.finaltext.className = 'final-score';
+        this.finaltext.innerHTML = 0;
+
+        this.display.appendChild(this.nametext);
+        this.display.appendChild(this.scoretext);
+        this.display.appendChild(this.finaltext);
+
+        frag.appendChild(this.display);
+    };
+
+    PlayerDisplay.prototype.showFinal = function(){
+        this.display.style.marginLeft = '-55px';
+        this.finaltext.classList.add('show');
+    };
+
+    PlayerDisplay.prototype.hideFinal = function(){
+        this.display.style.marginLeft = '';
+        this.finaltext.classList.remove('show');
+    };
+
+    PlayerDisplay.prototype.adjustPos = function(){
+        var d = $(this.display);
+        d.css({
+            marginLeft: -d.width() / 2,
+            marginTop: -d.height() / 2
+        });
+    };
+
     return {
         fragmentToDom: function(dom){
             if(frag){
                 dom.appendChild(frag);
                 frag = null;
             }
+        },
+        createPlayerDisplay: function(id, name){
+            return new PlayerDisplay(id, name);
         },
         createCardDisplay: function(numtext, suit){
             if(!frag){

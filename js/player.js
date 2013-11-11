@@ -1,13 +1,20 @@
-define(["Row", "Waste", "RandomBrain"],
-function(Row ,  Waste,   RandomBrain){
+define(["Row", "Waste", "RandomBrain", "domBinding"],
+function(Row ,  Waste,   RandomBrain,   domBinding){
     "use strict";
 
-    var Player = function(id){
+    var Player = function(id, name){
         this.row = new Row(id, this);
         this.waste = new Waste(id, this);
         this.id = id;
         this.score = 0;
         this.oldScore = 0;
+        this.display = domBinding.createPlayerDisplay(id, name);
+    };
+
+    Player.prototype.adjustPos = function(){
+        this.row.adjustPos();
+        this.waste.adjustPos();
+        this.display.adjustPos();
     };
 
     Player.prototype.initForNewRound = function(){

@@ -2,8 +2,8 @@ define(["Player", "jquery", "ui"],
 function(Player,  $,         ui){
     "use strict";
 
-    var Human = function(id){
-        Player.call(this, id);
+    var Human = function(id, name){
+        Player.call(this, id, name);
         this.row.flipped = false;
     };
 
