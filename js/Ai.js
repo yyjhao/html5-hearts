@@ -41,7 +41,7 @@ function(Player,  $){
         this.brain.watch(info);
     };
 
-    Ai.prototype.decide = function(validCards, boardCards){
+    Ai.prototype.decide = function(validCards, boardCards, boardPlayers){
         return this.brain.decide(validCards, boardCards).then(function(c){
             return this.row.cards[c];
         }.bind(this));
