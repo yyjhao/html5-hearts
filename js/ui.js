@@ -17,6 +17,10 @@ define(function(){
 
 
     return {
+        clearEvents: function(){
+            $(button).off("click");
+            $(arrow).off("click");
+        },
         showArrow: function(){
             arrow.classList.add('show');
         },

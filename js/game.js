@@ -46,6 +46,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                 p.clearScore();
             });
             rounds = 0;
+            ui.clearEvents();
             status = 'prepare';
             this.proceed();
         },
@@ -86,7 +87,6 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                 'prepare': function(){
                     ui.hideMessage();
                     ui.hideButton();
-                    rounds = 0;
                     players.forEach(function(p){
                         p.initForNewRound();
                     });

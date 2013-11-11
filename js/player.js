@@ -24,6 +24,7 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
     Player.prototype.initForNewRound = function(){
         this._score = 0;
         this.row.cards = [];
+        this.row.curShifted = [];
         this.waste.cards = [];
         this.display.rank = null;
         this.display.adjustPos();
