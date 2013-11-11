@@ -1,5 +1,5 @@
-define(["ui", "Human", "Ai", "board", "config", "jquery"],
-function(ui,   Human,   Ai,   board,   config,   $){
+define(["ui", "Human", "Ai", "board", "config", "jquery", "rules"],
+function(ui,   Human,   Ai,   board,   config,   $,        rules){
     "use strict";
 
     var rounds = 0;
@@ -17,6 +17,9 @@ function(ui,   Human,   Ai,   board,   config,   $){
     var heartBroken = false;
 
     var informCardOut = function(player, card){
+        if(card.suit === 1){
+            heartBroken = true;
+        }
         players.forEach(function(p){
             p.watch({
                 type: "out",
@@ -37,7 +40,7 @@ function(ui,   Human,   Ai,   board,   config,   $){
                 r.row.adjustPos();
                 // r.waste.adjustPos();
             });
-            // board.desk.adjustPos();
+            board.desk.adjustPos();
         },
         newGame: function(){
             players.forEach(function(p){
@@ -48,6 +51,7 @@ function(ui,   Human,   Ai,   board,   config,   $){
             this.proceed();
         },
         next: function(){
+            console.log(status, "next");
             if (status == 'confirming'){
                 currentPlay = board.cards[26].parent.playedBy.id;
                 if(currentPlay === 0){
@@ -74,7 +78,8 @@ function(ui,   Human,   Ai,   board,   config,   $){
                     'end': 'prepare'
                 })[status];
             }
-            setTimeout(this.proceed.bind(this), 0);
+            var wait = status === 'playing' ? 300 : 0;
+            setTimeout(this.proceed.bind(this), wait);
         },
         proceed: function(){
             ({
@@ -98,7 +103,7 @@ function(ui,   Human,   Ai,   board,   config,   $){
                 'start': function(){
                     rounds++;
                     ui.showPassingScreen(rounds % 3);
-                    $.when(players.map(function(p){
+                    $.when.apply($, players.map(function(p){
                         return p.prepareTransfer();
                     })).done(this.next.bind(this));
                 },
@@ -113,15 +118,21 @@ function(ui,   Human,   Ai,   board,   config,   $){
                         r.row.sort();
                     });
                     var self = this;
-                    ui.confirmCards().done(function(){
+                    ui.showConfirmScreen().done(function(){
                         players[0].doneTransfer();
                         self.next();
                     });
                 },
                 'playing': function(){
-                    player[currentPlay].decide().done(function(card){
+                    players[currentPlay].decide(
+                        rules.getValidCards(players[currentPlay].row.cards,
+                                            board.desk.cards[0] ? board.cards[0].suit : -1,
+                                            heartBroken))
+                    .done(function(card){
                         card.parent.out(card);
-                        informCardOut(player[currentPlay], card);
+                        board.desk.addCard(card, players[currentPlay]);
+                        card.adjustPos();
+                        informCardOut(players[currentPlay], card);
                         this.next();
                     }.bind(this));
                 },

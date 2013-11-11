@@ -21,6 +21,7 @@ function(domBinding){
             })[acutualNum];
         }
         this.display = domBinding.createCardDisplay(numtext, this.suit);
+        this.display.onClick = this.shift.bind(this);
      };
 
     Card.suits = suits;
@@ -30,14 +31,14 @@ function(domBinding){
         this.display.adjustPos(this.pos);
     };
 
-    Card.prototype.shift = function(par){
-        return function(){
-            if(par.parent.curShifted.indexOf(par) !== -1){
-                par.parent.removeShift(par);
-            }else{
-                par.parent.addShift(par);
-            }
-        };
+    Card.prototype.shift = function(){
+        if(!this.display.isSelectable()) return;
+        if(!this.parent.curShifted) return;
+        if(this.parent.curShifted.indexOf(this) !== -1){
+            this.parent.removeShift(this);
+        }else{
+            this.parent.addShift(this);
+        }
     };
 
     Card.prototype.out = function(){

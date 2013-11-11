@@ -6,6 +6,9 @@ define(function(){
 
     var CardDisplay = function(dom){
         this.dom = $(dom);
+        this.dom.on("click", function(){
+            this.onClick && this.onClick();
+        }.bind(this));
     };
 
     CardDisplay.prototype.adjustPos = function(pos){
@@ -24,7 +27,11 @@ define(function(){
         } else {
             this.dom.removeClass("movable");
         }
-    }
+    };
+
+    CardDisplay.prototype.isSelectable = function(){
+        return this.dom.is(".movable");
+    };
 
     return {
         fragmentToDom: function(dom){

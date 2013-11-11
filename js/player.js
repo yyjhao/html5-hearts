@@ -26,7 +26,7 @@ function(Row ,  Waste,   RandomBrain){
     Player.prototype.out = function(outCards){
         var self = this;
         outCards.forEach(function(c){
-            self.row.out(self.row.cards.indexOf(c));
+            self.row.out(c);
         });
     };
 

@@ -1,8 +1,8 @@
-define(["Player", "jquery"],
-function(Player,  $){
+define(["Player", "jquery", "ui"],
+function(Player,  $,         ui){
     "use strict";
 
-    var Human = function(id, ui){
+    var Human = function(id){
         Player.call(this, id);
         this.row.flipped = false;
     };
@@ -11,17 +11,16 @@ function(Player,  $){
 
     Human.prototype.takeIn = function(cards){
         Player.prototype.takeIn.call(this,cards);
-        this.row.setCurShifted(cards);
+        this.row.setSelected(cards);
     };
 
-    Human.prototype.decide = function(){
-        var cs = this.getValidCards();
-        cs.forEach(function(c){
+    Human.prototype.decide = function(validCards){
+        validCards.forEach(function(c){
             c.display.setSelectable(true);
         });
         var d = $.Deferred();
         var row = this.row;
-        ui.buttonOnOnce(function(){
+        ui.buttonClickOnce(function(){
             d.resolve(row.getSelected()[0]);
         });
         return d;
@@ -36,15 +35,35 @@ function(Player,  $){
         this.row.cards.forEach(function(c){
             c.display.setSelectable(true);
         });
+        this.row.maxShift = 3;
         var d = $.Deferred();
         var row = this.row;
-        var self = this;
-        ui.buttonOnOnce(function(){
+        ui.arrowClickOnce(function(){
+            this.selected = row.getSelected();
+            this.row.maxShift = 1;
+            this.row.cards.forEach(function(c){
+                c.display.setSelectable(false);
+            });
             d.resolve();
-            self.selected = row.getSelected();
-        });
+        }.bind(this));
 
         return d;
+    };
+
+    Human.prototype.rowSelected = function(){
+        if(this.row.maxShift === 3){
+            ui.showArrow();
+        } else {
+            ui.showButton("Go!");
+        }
+    };
+
+    Human.prototype.rowDeselected = function(){
+        if(this.row.maxShift === 3){
+            ui.hideArrow();
+        } else {
+            ui.hideButton();
+        }
     };
 
     return Human;

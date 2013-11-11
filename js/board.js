@@ -1,5 +1,5 @@
-define(["Card", "jquery"],
-function(Card,  $){
+define(["Card", "jquery", "layout"],
+function(Card,  $,         layout){
     var cards = [];
 
     for(var i = 0; i < 52; i++){
@@ -66,19 +66,17 @@ function(Card,  $){
                 var pos = {
                     x: 0,
                     y: layout.cardHeight / 2 + layout.cardWidth / 2,
-                    z: ind + 52
+                    z: ind + 52,
+                    rotateY: 0
                 };
                 pos.rotation = this.cards[ind].pos.rotation;
                 return pos;
             },
-            addCard: function(card, applying){
+            addCard: function(card, player){
                 card.ind = this.cards.length;
                 this.cards.push(card);
-                if(!applying){
-                    this.players.push(card.parent.playedBy);
-                }
+                this.players.push(player);
                 card.parent = this;
-                card.flip(false);
             },
             adjustPos: function(){
                 this.cards.forEach(function(c){

@@ -15,9 +15,44 @@ define(function(){
     document.body.appendChild(message);
 
     return {
+        showArrow: function(){
+            arrow.classList.add('show');
+        },
+        hideArrow: function(){
+            arrow.classList.remove('show');
+        },
+        showButton: function(text){
+            button.innerHTML = text;
+            button.classList.add('show');
+        },
+        hideButton: function(text){
+            button.classList.remove('show');
+        },
+        arrowClickOnce: function(cb){
+            $(arrow).on("click", function(){
+                cb();
+                $(this).off("click", cb);
+            });
+        },
+        buttonClickOnce: function(cb){
+            $(button).on("click", function(){
+                cb();
+                $(this).off("click", cb);
+            });
+        },
         showMessage: function(msg){
             message.innerHTML = msg;
             message.style.display = 'block';
+        },
+        showConfirmScreen: function(){
+            arrow.classList.remove("show");
+            this.showButton("confirm");
+            this.hideMessage();
+            var d = $.Deferred();
+            this.buttonClickOnce(function(){
+                d.resolve();
+            });
+            return d;
         },
         showPassingScreen: function(dir){
             var directions = ['left', 'right', 'opposite'];
@@ -32,9 +67,6 @@ define(function(){
         },
         hideMessage: function(){
             message.style.display = '';
-        },
-        hideButton: function(){
-            $(button).removeClass("show");
         }
     };
 });

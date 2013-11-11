@@ -2,13 +2,14 @@ define(["layout"],
 function(layout){
     "use strict";
 
-    var Row = function(id){
+    var Row = function(id, player){
         this.id = id;
         this.cards = [];
         this.isVertical = id%2;
         this.rotation = 90 * (( id + 1) % 4) - 90;
         this.curShifted = [];
         this.flipped = true;
+        this.playedBy = player;
     };
 
     Row.prototype.addCard = function(card){
@@ -18,6 +19,14 @@ function(layout){
         if(!this.flipped){
             card.display.onmouseup = card.shift(card);
         }
+    };
+
+    Row.prototype.getSelected = function(){
+        return [].concat(this.curShifted);
+    };
+
+    Row.prototype.setSelected = function(cards){
+        this.curShifted = [].concat(cards);
     };
 
     Row.prototype.adjustPos = function(){
@@ -53,67 +62,36 @@ function(layout){
         }).forEach(function(v, ind){
             v.ind = ind;
         });
-        this.cards.forEach(function(v){
-            v.adjustPos();
-        });
-    };
-
-    Row.prototype.addShift = function(nc){
-        if(!nc.display.classList.contains('movable'))return;
-        ({
-            'start': function(){
-                if(this.curShifted.length === 3){
-                    this.curShifted.shift();
-                }
-                this.curShifted.push(nc);
-                if(this.curShifted.length === 3){
-                    game.interface.arrow.classList.add('show');
-                }
-            },
-            'playing': function(){
-                this.curShifted.pop();
-                this.curShifted.push(nc);
-                this.showButton();
-            },
-            'confirming': function(){}
-        })[game.getStatus()].call(this);
         this.adjustPos();
     };
 
-    Row.prototype.showButton = function(){
-        if(window.isDebug) return;
-        game.interface.button.innerHTML = 'Go!';
-        game.interface.button.classList.add('show');
+    Row.prototype.addShift = function(nc){
+        if(this.curShifted.length === this.maxShift){
+            this.curShifted.shift();
+        }
+        this.curShifted.push(nc);
+        if(this.curShifted.length === this.maxShift){
+            this.playedBy.rowSelected(this.maxShift);
+        }
+        this.adjustPos();
     };
 
-
-    Row.prototype.out = function(ind, toDesk){
+    Row.prototype.out = function(card){
+        card.parent = null;
+        var ind = this.cards.indexOf(card);
         this.curShifted = [];
-        var c = this.cards[ind];
-        if(c.suit === 1 && toDesk){
-            game.informHeartBroken();
-        }
-        if(!window.isDebug){
-            c.display.onmouseup = null;
-        }
         this.cards.splice(ind, 1);
         for(var i = ind; i < this.cards.length; i++){
             this.cards[i].ind = i;
         }
-        if(toDesk){
-            game.board.desk.addCard(c);
-            c.adjustPos();
-            this.adjustPos();
-        }
+        this.adjustPos();
     };
 
     Row.prototype.removeShift = function(nc){
-        if(game.getStatus() === 'confirming') return;
-        game.interface.arrow.classList.remove('show');
-        game.interface.button.classList.remove('show');
         this.curShifted = this.curShifted.filter(function(v){
             return v !== nc;
         });
+        this.playedBy.rowDeselected();
         this.adjustPos();
     };
 

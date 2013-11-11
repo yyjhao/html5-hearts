@@ -19,8 +19,8 @@ function(Player,  $){
         for(var i = 0; i < 3; i++){
             cards.push(this.row.cards[selected[i]]);
         }
-        this.selected = selected;
-        return $.Deferred.resolve();
+        this.selected = cards;
+        return $.Deferred().resolve();
     };
 
     Ai.prototype.transferTo = function(other){
@@ -28,7 +28,7 @@ function(Player,  $){
         this.brain.watch({
             type: "in",
             player: other,
-            cards: cards
+            cards: this.selected
         });
     };
 
@@ -36,8 +36,10 @@ function(Player,  $){
         this.brain.watch(info);
     };
 
-    Ai.prototype.decide = function(board){
-        return this.brain.decide(board);
+    Ai.prototype.decide = function(validCards){
+        return this.brain.decide(validCards).then(function(c){
+            return this.row.cards[c];
+        }.bind(this));
     };
 
     return Ai;
