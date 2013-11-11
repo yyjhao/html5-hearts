@@ -28,11 +28,12 @@ function(Player,  $){
     };
 
     Ai.prototype.transferTo = function(other){
+        var selected = this.selected;
         Player.prototype.transferTo.call(this, other);
         this.brain.watch({
             type: "in",
             player: other,
-            cards: this.selected
+            cards: selected
         });
     };
 

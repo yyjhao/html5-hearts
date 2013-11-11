@@ -17,10 +17,10 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
     var heartBroken = false;
 
     var initBrains = function(){
-        players[0].brain = new SimpleBrain();
-        players[1].brain = new SimpleBrain();
-        players[2].brain = new SimpleBrain();
-        players[3].brain = new SimpleBrain();
+        players[0].brain = new PomDPBrain(players[0]);
+        players[1].brain = new PomDPBrain(players[1]);
+        players[2].brain = new PomDPBrain(players[2]);
+        players[3].brain = new PomDPBrain(players[3]);
     };
 
     var informCardOut = function(player, card){
@@ -134,8 +134,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                 'playing': function(){
                     players[currentPlay].decide(
                         rules.getValidCards(players[currentPlay].row.cards,
-                                            board.desk.cards[0] ? board.cards[0].suit : -1,
-                                            heartBroken), board.desk.cards)
+                                            board.desk.cards[0] ? board.desk.cards[0].suit : -1,
+                                            heartBroken))
                     .done(function(card){
                         card.parent.out(card);
                         board.desk.addCard(card, players[currentPlay]);

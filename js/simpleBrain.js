@@ -8,9 +8,10 @@ function(Brain){
 
     SimpleBrain.prototype = Object.create(Brain.prototype);
 
-    SimpleBrain.prototype.decide = function(vc, board){
+    SimpleBrain.prototype.decide = function(vc){
         var len = vc.length,
-            suit = -1, maxNum = -1;
+            suit = -1, maxNum = -1,
+            board = this.board;
 
         return $.Deferred().resolve((function(){
                 if(board.length){
