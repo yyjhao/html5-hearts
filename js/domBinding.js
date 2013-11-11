@@ -19,7 +19,7 @@ define(function(){
             pos.rotateY = 0;
         }
         this.dom.css({
-            zIndex: 200 - pos.z,
+            zIndex: 10 + pos.z,
             transform: 'rotate(' + pos.rotation + 'deg) translate3d(' + pos.x + 'px, ' + pos.y + 'px, ' + pos.z + 'px) rotateY(' + pos.rotateY + 'deg)'
         });
     };

@@ -478,6 +478,7 @@ td[contentEditable]{
 
 .player-name, .player-score, .final-score{
 	padding: 10px;
+	float: left;
 	padding-bottom: 8px;
 	margin: 10px;
 	margin-top: 8px;
