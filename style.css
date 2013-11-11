@@ -16,6 +16,26 @@
 	}
 }
 
+
+@-moz-keyframes "pulsing" {
+	from {
+	       box-shadow: 0 0 0 black, inset 0 0 0 lightblue, 0 0 0 0 lightblue;
+	}
+	to {
+	       box-shadow: 0 0 0 black, inset 0 0 10px lightblue, 0 0 10px 10px lightblue;
+	}
+}
+
+
+@-ms-keyframes "pulsing" {
+	from {
+	       box-shadow: 0 0 0 black, inset 0 0 0 lightblue, 0 0 0 0 lightblue;
+	}
+	to {
+	       box-shadow: 0 0 0 black, inset 0 0 10px lightblue, 0 0 10px 10px lightblue;
+	}
+}
+
 html, body{
 	padding: 0;
 	margin: 0;
@@ -419,6 +439,9 @@ td[contentEditable]{
 
 .info-board.highlight{
 	-webkit-animation: pulsing 1s alternate infinite;
+	-moz-animation: pulsing 1s alternate infinite;
+	-ms-animation: pulsing 1s alternate infinite;
+	animation: pulsing 1s alternate infinite;
 }
 
 .info-board.board-0{
