@@ -43,7 +43,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
         },
         newGame: function(){
             players.forEach(function(p){
-                p.oldScore = 0;
+                p.clearScore();
             });
             rounds = 0;
             status = 'prepare';
@@ -148,20 +148,20 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules){
                 'allEnd': function(){
                     ui.showScore();
                     players.forEach(function(p){
-                        p.score = p.oldScore = 0;
+                        p.clearScore();
                     });
                     rounds = -1;
                     ui.showWinner();
                 },
                 'end': function(){
                     if(players.some(function(p){
-                        return p.score === 26;
+                        return p.getScore() === 26;
                     })){
                         players.forEach(function(p){
-                            if(p.score !== 26){
-                                p.score = 26;
+                            if(p.getScore() !== 26){
+                                p.setScore(26);
                             }else{
-                                p.score = 0;
+                                p.setScore(0);
                             }
                         });
                     }

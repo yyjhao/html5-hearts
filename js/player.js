@@ -6,9 +6,13 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
         this.row = new Row(id, this);
         this.waste = new Waste(id, this);
         this.id = id;
-        this.score = 0;
-        this.oldScore = 0;
+        this._score = 0;
+        this._oldScore = 0;
         this.display = domBinding.createPlayerDisplay(id, name);
+        this.brain = null;
+        this.selected = null;
+
+        Object.seal(this);
     };
 
     Player.prototype.adjustPos = function(){
@@ -18,7 +22,7 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
     };
 
     Player.prototype.initForNewRound = function(){
-        this.score = 0;
+        this._score = 0;
         this.row.cards = [];
         this.waste.cards = [];
 
@@ -42,6 +46,24 @@ function(Row ,  Waste,   RandomBrain,   domBinding){
         inCards.forEach(function(c){
             self.row.addCard(c);
         });
+    };
+
+    Player.prototype.clearScore = function(){
+        this._score = this._oldScore = 0;
+    };
+
+    Player.prototype.setScore = function(val){
+        this._score = val;
+        this.display.setScoreText(this._oldScore + " + " + this._score);
+    };
+
+    Player.prototype.incrementScore = function(val){
+        this.setScore(this._score + val);
+        if(val > 0) this.display.highlight();
+    };
+
+    Player.prototype.getScore = function(){
+        return this._score;
     };
 
     Player.prototype.watch = function(){};

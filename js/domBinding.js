@@ -76,6 +76,18 @@ define(function(){
         });
     };
 
+    PlayerDisplay.prototype.setScoreText = function(text){
+        this.scoretext.innerHTML = text;
+    };
+
+    PlayerDisplay.prototype.highlight = function(){
+        var b = this.scoretext.classList;
+        b.add('highlight');
+        setTimeout(function(){
+            b.remove('highlight');
+        }, 100);
+    };
+
     return {
         fragmentToDom: function(dom){
             if(frag){
