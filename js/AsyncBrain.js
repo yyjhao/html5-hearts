@@ -27,6 +27,12 @@ function(Brain){
 
     AsyncBrain.prototype = Object.create(Brain.prototype);
 
+    AsyncBrain.prototype.terminate = function(){
+        this.initDefer && this.initDefer.reject();
+        this.curDefer && this.curDefer.reject();
+        this.confirmDefer && this.confirmDefer.reject();
+    };
+
     AsyncBrain.prototype.init = function(){
         return this.initDefer;
     };

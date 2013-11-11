@@ -16,9 +16,18 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
 
     var heartBroken = false;
 
+    var nextTimer = 0;
+
     var initBrains = function(){
         // players[0].brain = new AsyncBrain(players[0], "PomDPBrain");
-        players[1].brain = new AsyncBrain(players[1], "McBrain");
+
+        if(players[1].brain){
+            players[1].brain.terminate();
+            players[2].brain.terminate();
+            players[3].brain.terminate();
+        }
+
+        players[1].brain = new AsyncBrain(players[1], "PomDPBrain");
         players[2].brain = new AsyncBrain(players[2], "McBrain");
         players[3].brain = new AsyncBrain(players[3], "McBrain");
 
@@ -54,8 +63,10 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             board.desk.adjustPos();
         },
         newGame: function(){
+            clearTimeout(nextTimer);
             players.forEach(function(p){
                 p.clearScore();
+                p.setActive(false);
             });
             rounds = 0;
             ui.clearEvents();
@@ -78,7 +89,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                 status = 'end';
             } else {
                 status = ({
-                    'prepare': 'start',
+                    'prepare': 'distribute',
+                    'distribute': 'start',
                     'start': 'passing',
                     'passing': 'confirming',
                     'confirming': 'playing',
@@ -89,10 +101,11 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             }
             var waitTime = {
                 'playing': 100,
-                'endRound': 900
+                'endRound': 900,
+                'distribute': 300
             };
             var wait = waitTime[status] || 0;
-            setTimeout(this.proceed.bind(this), wait);
+            nextTimer = setTimeout(this.proceed.bind(this), wait);
         },
         proceed: function(){
             ({
@@ -105,16 +118,15 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     board.init();
                     heartBroken = false;
                     board.shuffleDeck();
+                    initBrains().done(this.next.bind(this));
+                },
+                'distribute': function(){
                     var self = this;
-                    initBrains().done(function(){
-                        setTimeout(function(){
-                            board.distribute(players).done(function(){
-                                players.forEach(function(p){
-                                    p.row.sort();
-                                });
-                                self.next();
-                            });
-                        }, 300);
+                    board.distribute(players).done(function(){
+                        players.forEach(function(p){
+                            p.row.sort();
+                        });
+                        self.next();
                     });
                 },
                 'start': function(){
