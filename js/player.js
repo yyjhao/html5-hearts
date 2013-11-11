@@ -27,6 +27,7 @@ function(Row ,  Waste,   domBinding){
         this.waste.cards = [];
         this.display.rank = null;
         this.display.adjustPos();
+        this.display.setScoreText(this._oldScore);
 
         // if(this.id % 2 === 1) this.brain = new McBrain(this);
         // if(this.id === 2) this.brain = new McBrain(this);
@@ -72,6 +73,10 @@ function(Row ,  Waste,   domBinding){
 
     Player.prototype.getScore = function(){
         return this._score;
+    };
+
+    Player.prototype.setActive = function(yes){
+        this.display.setHighlight(yes);
     };
 
     Player.prototype.watch = function(){};

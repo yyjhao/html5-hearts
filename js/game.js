@@ -4,7 +4,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
 
     var rounds = 0;
     var players = [
-        new Ai(0, config.names[0]),
+        new Human(0, config.names[0]),
         new Ai(1, config.names[1]),
         new Ai(2, config.names[2]),
         new Ai(3, config.names[3])
@@ -17,13 +17,12 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
     var heartBroken = false;
 
     var initBrains = function(){
-        players[0].brain = new AsyncBrain(players[0], "PomDPBrain");
+        // players[0].brain = new AsyncBrain(players[0], "PomDPBrain");
         players[1].brain = new AsyncBrain(players[1], "McBrain");
         players[2].brain = new AsyncBrain(players[2], "McBrain");
         players[3].brain = new AsyncBrain(players[3], "McBrain");
 
-        return $.when(players[0].brain.init(),
-                      players[1].brain.init(),
+        return $.when(players[1].brain.init(),
                       players[2].brain.init(),
                       players[3].brain.init());
     };
@@ -89,8 +88,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                 })[status];
             }
             var waitTime = {
-                'playing': 10,
-                'endRound': 10
+                'playing': 100,
+                'endRound': 900
             };
             var wait = waitTime[status] || 0;
             setTimeout(this.proceed.bind(this), wait);
@@ -139,6 +138,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     })).done(this.next.bind(this));
                 },
                 'playing': function(){
+                    players[currentPlay].setActive(true);
                     players[currentPlay].decide(
                         rules.getValidCards(players[currentPlay].row.cards,
                                             board.desk.cards[0] ? board.desk.cards[0].suit : -1,
@@ -149,6 +149,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                             return p.getScore();
                         }))
                     .done(function(card){
+                        players[currentPlay].setActive(false);
                         card.parent.out(card);
                         board.desk.addCard(card, players[currentPlay]);
                         card.adjustPos();

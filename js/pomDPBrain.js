@@ -57,8 +57,7 @@ function(Brain ,  op                    ,  PomDPSimulator){
     PomDPBrain.prototype = Object.create(Brain.prototype);
 
     PomDPBrain.prototype.search = function(vc){
-        // var times = 500;
-        var endTime = Date.now() + 500 * 1;
+        var endTime = Date.now() + 2000;
         var times = 0;
         while(Date.now() < endTime){
             var state = this.genSample(this.root);

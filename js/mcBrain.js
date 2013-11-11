@@ -105,7 +105,7 @@ function( Simulator ,  Brain,   op){
         }else{
 
             var samples = 0,
-                endTime = Date.now() + 1500 * 1;
+                endTime = Date.now() + 2000;
             var scores = vc.map(function(c){
                 return 0;
             });

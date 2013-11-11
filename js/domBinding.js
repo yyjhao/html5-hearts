@@ -67,6 +67,14 @@ define(function(){
         }
     };
 
+    PlayerDisplay.prototype.setHighlight = function(yes){
+        if(yes){
+            $(this.display).addClass("highlight");
+        } else {
+            $(this.display).removeClass("highlight");
+        }
+    };
+
     PlayerDisplay.prototype.adjustPos = function(){
         var d = $(this.display);
         if(this.rank === null){

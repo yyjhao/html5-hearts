@@ -1,3 +1,21 @@
+@keyframes "pulsing" {
+	from {
+	       box-shadow: 0 0 0 black, inset 0 0 0 lightblue, 0 0 0 0 lightblue;
+	}
+	to {
+	       box-shadow: 0 0 0 black, inset 0 0 10px lightblue, 0 0 10px 10px lightblue;
+	}
+}
+
+@-webkit-keyframes "pulsing" {
+	from {
+	       box-shadow: 0 0 0 black, inset 0 0 0 lightblue, 0 0 0 0 lightblue;
+	}
+	to {
+	       box-shadow: 0 0 0 black, inset 0 0 10px lightblue, 0 0 10px 10px lightblue;
+	}
+}
+
 html, body{
 	padding: 0;
 	margin: 0;
@@ -397,6 +415,10 @@ td[contentEditable]{
 	background-image:-ms-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:-o-linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
 	background-image:linear-gradient(top, rgba(30, 30, 30, 0.8), rgba(0,0,0, 0.8));
+}
+
+.info-board.highlight{
+	-webkit-animation: pulsing 1s alternate infinite;
 }
 
 .info-board.board-0{
