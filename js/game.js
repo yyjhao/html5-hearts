@@ -27,9 +27,13 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             players[3].brain.terminate();
         }
 
-        players[1].brain = new AsyncBrain(players[1], "PomDPBrain");
-        players[2].brain = new AsyncBrain(players[2], "McBrain");
-        players[3].brain = new AsyncBrain(players[3], "McBrain");
+        // players[1].brain = new AsyncBrain(players[1], "PomDPBrain");
+        // players[2].brain = new AsyncBrain(players[2], "McBrain");
+        // players[3].brain = new AsyncBrain(players[3], "McBrain");
+
+        players[1].brain = new SimpleBrain(players[1]);
+        players[2].brain = new SimpleBrain(players[2]);
+        players[3].brain = new SimpleBrain(players[3]);
 
         return $.when(players[1].brain.init(),
                       players[2].brain.init(),

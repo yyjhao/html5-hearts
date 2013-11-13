@@ -1,4 +1,5 @@
-define(function(){
+define(["jquery"],
+function($){
     "use strict";
 
     var Brain = function(user){
@@ -14,6 +15,14 @@ define(function(){
                 cb();
             }
         };
+    };
+
+    Brain.prototype.init = function(){
+        return $.Deferred().resolve();
+    };
+
+    Brain.prototype.terminate = function(){
+
     };
 
     return Brain;
