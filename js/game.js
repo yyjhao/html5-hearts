@@ -119,7 +119,8 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             var waitTime = {
                 'playing': 100,
                 'endRound': 900,
-                'distribute': 300
+                'distribute': 300,
+                'end': 900
             };
             var wait = waitTime[status] || 0;
             nextTimer = setTimeout(this.proceed.bind(this), wait);
