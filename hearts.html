@@ -9,7 +9,7 @@
 </head>
 <body ontouchstart="">
 	<div id = 'main-button-group'>
-		<button class = 'main-button' id = 'newgame-but'>New Game</button>
+		<button class = 'main-button newgame-but'>New Game</button>
 		<button class = 'main-button' id = 'settings-but'>Settings</button>
 	</div>
 	<div id = 'game-region'></div>
@@ -30,22 +30,29 @@
 					<tr>
 						<td>Player 2(East):</td>
 						<td class = 'player-set-name two'></td>
-						<td class = 'player-diff two'></td>
+						<td class = 'player-diff two'>
+							<input type="number" min="1" max="4">
+						</td>
 					</tr>
 					<tr>
 						<td>Player 3(North):</td>
 						<td class = 'player-set-name three'></td>
-						<td class = 'player-diff three'></td>
+						<td class = 'player-diff three'>
+							<input type="number" min="1" max="4">
+						</td>
 					</tr>
 					<tr>
 						<td>Player 4(West):</td>
 						<td class = 'player-set-name four'></td>
-						<td class = 'player-diff four'></td>
+						<td class = 'player-diff four'>
+							<input type="number" min="1" max="4">
+						</td>
 					</tr>
 				</tbody>
 			</table>
 		</div>
-		<button>Back</button>
+		<button class="back-but">Back</button>
+		<button class="newgame-but">Apply</button>
 	</div>
 	<script data-main='js/main' src='js/lib/require.js'></script>
 </body>

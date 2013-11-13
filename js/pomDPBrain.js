@@ -5,8 +5,19 @@ function(Brain ,  op                    ,  PomDPSimulator){
     var removeFromUnorderedArray = op.removeFromUnorderedArray;
     var cardsInfo = op.cardsInfo;
 
-    var PomDPBrain = function(user, c){
-        this.c = c || 10;
+    var defaultOptions = {
+        time: 1000,
+        c: 10
+    };
+
+    var PomDPBrain = function(user, options){
+        if(!options){
+            options = defaultOptions;
+        }
+
+        this.c = options.c || 10;
+        this.maxTime = options.time || 1000;
+
         this.user = user;
         this.ind = user;
         this.simulator = new PomDPSimulator(user);
@@ -57,7 +68,7 @@ function(Brain ,  op                    ,  PomDPSimulator){
     PomDPBrain.prototype = Object.create(Brain.prototype);
 
     PomDPBrain.prototype.search = function(vc){
-        var endTime = Date.now() + 2000;
+        var endTime = Date.now() + this.maxTime;
         var times = 0;
         while(Date.now() < endTime){
             var state = this.genSample(this.root);

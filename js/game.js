@@ -18,6 +18,14 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
 
     var nextTimer = 0;
 
+    var waitDefer = function(time){
+        var d = $.Deferred();
+        setTimeout(function(){
+            d.resolve();
+        }, time);
+        return d;
+    };
+
     var initBrains = function(){
         // players[0].brain = new AsyncBrain(players[0], "PomDPBrain");
 
@@ -27,13 +35,17 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
             players[3].brain.terminate();
         }
 
-        // players[1].brain = new AsyncBrain(players[1], "PomDPBrain");
-        // players[2].brain = new AsyncBrain(players[2], "McBrain");
-        // players[3].brain = new AsyncBrain(players[3], "McBrain");
-
-        players[1].brain = new SimpleBrain(players[1]);
-        players[2].brain = new SimpleBrain(players[2]);
-        players[3].brain = new SimpleBrain(players[3]);
+        for(var i = 1; i < 4; i++){
+            if(config.levels[i] == 1){
+                players[i].brain = new SimpleBrain(players[i]);
+            } else if(config.levels[i] == 2){
+                players[i].brain = new AsyncBrain(players[i], "McBrain");
+            } else if(config.levels[i] == 3){
+                players[i].brain = new AsyncBrain(players[i], "PomDPBrain");
+            } else if(config.levels[i] == 4){
+                players[i].brain = new AsyncBrain(players[i], "PomDPBrain", {time: 2000});
+            }
+        }
 
         return $.when(players[1].brain.init(),
                       players[2].brain.init(),
@@ -155,7 +167,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                 },
                 'playing': function(){
                     players[currentPlay].setActive(true);
-                    players[currentPlay].decide(
+                    $.when(players[currentPlay].decide(
                         rules.getValidCards(players[currentPlay].row.cards,
                                             board.desk.cards[0] ? board.desk.cards[0].suit : -1,
                                             heartBroken),
@@ -163,7 +175,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                         board.desk.players,
                         players.map(function(p){
                             return p.getScore();
-                        }))
+                        })), waitDefer(200))
                     .done(function(card){
                         players[currentPlay].setActive(false);
                         card.parent.out(card);

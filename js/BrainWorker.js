@@ -24,7 +24,7 @@ function(McBrain,    PomDPBrain){
                 brain.watch(e.data.params);
                 break;
             case 'ini':
-                brain = new brains[e.data.brain](e.data.userId);
+                brain = new brains[e.data.brain](e.data.userId, e.data.options);
                 postMessage({
                     type: "ini-ed"
                 });

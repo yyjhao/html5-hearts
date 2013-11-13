@@ -659,3 +659,10 @@ td[contentEditable]{
 	-o-backface-visibility: hidden;
 	backface-visibility: hidden;
 }
+
+input[type="number"]{
+	background: transparent;
+	font-size: inherit;
+	padding: 0 0.5em;
+	color: white;
+}

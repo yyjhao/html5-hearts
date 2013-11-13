@@ -4,9 +4,18 @@ function( Simulator ,  Brain,   op){
 
     var cardsInfo = op.cardsInfo;
     var removeFromUnorderedArray = op.removeFromUnorderedArray;
+    var defaultOptions = {
+        time: 1000
+    };
 
-    var McBrain = function(userid){
+    var McBrain = function(userid, options){
         Brain.call(this, userid);
+
+        if(!options){
+            options = defaultOptions;
+        }
+
+        this.maxTime = options.time;
 
         this.samplePlayers = [[], [], [], []];
         this.tmpSample = [[], [], [], []];
@@ -105,7 +114,7 @@ function( Simulator ,  Brain,   op){
         }else{
 
             var samples = 0,
-                endTime = Date.now() + 2000;
+                endTime = Date.now() + this.maxTime;
             var scores = vc.map(function(c){
                 return 0;
             });

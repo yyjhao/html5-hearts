@@ -1,5 +1,4 @@
-define(["jquery"],
-function($){
+define(function(){
     "use strict";
 
     var Brain = function(user){

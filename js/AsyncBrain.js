@@ -2,7 +2,7 @@ define(["Brain"],
 function(Brain){
     "use strict";
 
-    var AsyncBrain = function(user, brainName){
+    var AsyncBrain = function(user, brainName, options){
         Brain.call(this, user);
         var worker = this.worker = new Worker("js/BrainWorker.js");
         this.initDefer = $.Deferred();
@@ -15,7 +15,8 @@ function(Brain){
                 worker.postMessage({
                     type: "ini",
                     userId: user.id,
-                    brain: brainName
+                    brain: brainName,
+                    options: options
                 });
             } else if(e.data.type === "ini-ed"){
                 self.initDefer.resolve();
