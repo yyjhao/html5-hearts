@@ -26,6 +26,7 @@ function(Row ,  Waste,   domBinding){
         this.row.cards = [];
         this.waste.cards = [];
         this.display.rank = null;
+        this.display.moveUp = false;
         this.display.adjustPos();
         this.display.setScoreText(this._oldScore);
 

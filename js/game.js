@@ -80,6 +80,7 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
         },
         newGame: function(){
             clearTimeout(nextTimer);
+            ui.hideWin();
             players.forEach(function(p){
                 p.clearScore();
                 p.setActive(false);
@@ -191,13 +192,6 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     info[0].waste.addCards(info[1]);
                     this.next();
                 },
-                'allEnd': function(){
-                    ui.showScore();
-                    players.forEach(function(p){
-                        p.clearScore();
-                    });
-                    ui.showWinner();
-                },
                 'end': function(){
                     if(players.some(function(p){
                         return p.getScore() === 26;
@@ -225,8 +219,20 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                     players.forEach(function(p){
                         p.adjustPos();
                     });
-                    ui.showButton("Continue");
-                    ui.buttonClickOnce(this.next.bind(this));
+                    if(players.some(function(p){
+                        return p._oldScore >= 100;
+                    })){
+                        players.forEach(function(p){
+                            p.display.moveUp = true;
+                            p.display.adjustPos();
+                        });
+                        ui.showWin(players[0] === rank[0]);
+                        ui.showButton("Restart");
+                        ui.buttonClickOnce(this.newGame.bind(this));
+                    } else {
+                        ui.showButton("Continue");
+                        ui.buttonClickOnce(this.next.bind(this));
+                    }
                 }
             })[status].bind(this)();
         }

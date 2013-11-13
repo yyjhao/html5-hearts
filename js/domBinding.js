@@ -90,7 +90,7 @@ define(function(){
         } else {
             this.finaltext.classList.add('show');
             d.css({
-                top: "50%",
+                top: this.moveUp ? "20%" : "50%",
                 left: "50%",
                 marginLeft: -d.width() / 2 - 55,
                 marginTop: -d.height() / 2,

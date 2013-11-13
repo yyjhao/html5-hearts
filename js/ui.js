@@ -3,18 +3,19 @@ define(function(){
 
     var arrow = document.createElement('div'),
         button = document.createElement('button'),
-        message = document.createElement('div');
+        message = document.createElement('div'),
+        endMessage = document.createElement("div");
 
     button.id = 'play-button';
     message.id = 'game-message';
     arrow.innerHTML = "&larr;";
     arrow.id = 'pass-arrow';
+    endMessage.id = "end-message";
 
     document.body.appendChild(arrow);
     document.body.appendChild(button);
     document.body.appendChild(message);
-
-
+    document.body.appendChild(endMessage);
 
     return {
         clearEvents: function(){
@@ -45,6 +46,13 @@ define(function(){
                 cb();
                 $(this).off("click");
             });
+        },
+        showWin: function(won){
+            endMessage.innerHTML = won ? "YOU WON!" : "YOU LOST!";
+            endMessage.classList.add("show");
+        },
+        hideWin: function(){
+            endMessage.classList.remove("show");
         },
         showMessage: function(msg){
             message.innerHTML = msg;
