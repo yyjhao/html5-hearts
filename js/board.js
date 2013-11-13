@@ -18,7 +18,7 @@ function(Card,  $,         layout){
             var self = this;
             this.cards.forEach(function(c){
                 c.parent = self;
-                c.setSelectable = false;
+                c.display.setSelectable(false);
             });
         },
         shuffleDeck: function(){
