@@ -151,6 +151,7 @@ td[contentEditable]{
 	color: white;
 	box-shadow: 0 0 0 1px black, inset 0 1px 1px rgba(255, 255, 255, 0.3), 0 1px 3px rgba(255, 255, 255, 0.8);
 	cursor: pointer;
+	vertical-align: bottom;
 }
 
 #control-region>button:hover{
