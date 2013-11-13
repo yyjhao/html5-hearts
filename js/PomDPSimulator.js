@@ -156,7 +156,6 @@ function(op){
             }
         });
         if(moonShooter !== -1){
-            if (!window.isDebug) console.log(this.state.scores);
             if(moonShooter === this.playerId){
                 outputScore = oriScore + 26;
             } else {
