@@ -15,6 +15,10 @@ function(Row ,  Waste,   domBinding){
         Object.seal(this);
     };
 
+    Player.prototype.setName = function(name){
+        this.display.setName(name);
+    };
+
     Player.prototype.adjustPos = function(){
         this.row.adjustPos();
         this.waste.adjustPos();

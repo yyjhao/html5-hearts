@@ -88,6 +88,13 @@ td[contentEditable]{
 	-ms-transform: perspective(1000px);
 	-o-transform: perspective(1000px);
 	transform: perspective(1000px);
+
+	-webkit-transform: translateZ(999px);
+	-moz-transform: translateZ(999px);
+	-ms-transform: translateZ(999px);
+	transform: translateZ(999px);
+
+	z-index: 999;
 }
 
 #control-region[hidden]{

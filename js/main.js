@@ -26,7 +26,9 @@ function(game,    $,        domBinding,   layout,   config){
     $('#control-region>.newgame-but').on("click", function(){
         config.names.forEach(function(n, ind){
             config.levels[ind] = $('.player-diff.' + nums[ind] + ' input').val();
+            config.names[ind] = $('.player-set-name.' + nums[ind]).text();
         });
+        config.sync();
     });
     $('.newgame-but').on("click", function(){
         if(confirm("This will end the current game. Are you sure?")){
@@ -37,7 +39,8 @@ function(game,    $,        domBinding,   layout,   config){
         $('#settings-dialog')[0].hidden = false;
         config.names.forEach(function(n,ind){
             $('.player-set-name.' + nums[ind])[0].innerHTML = n;
-            $('.player-diff.' + nums[ind] + ' input').val(config.levels[ind]);
+            $('.player-diff.' + nums[ind] + ' input').val(parseInt(config.levels[ind]));
+            console.log(parseInt(config.levels[ind]));
         });
         $('#control-region')[0].hidden = false;
     });

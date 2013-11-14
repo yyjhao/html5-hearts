@@ -81,9 +81,10 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
         newGame: function(){
             clearTimeout(nextTimer);
             ui.hideWin();
-            players.forEach(function(p){
+            players.forEach(function(p, i){
                 p.clearScore();
                 p.setActive(false);
+                p.setName(config.names[i])
             });
             rounds = 0;
             ui.clearEvents();

@@ -60,6 +60,10 @@ define(function(){
         this.rank = null;
     };
 
+    PlayerDisplay.prototype.setName = function(name){
+        this.nametext.innerHTML = name;
+    };
+
 
     PlayerDisplay.prototype.setHuman = function(yes){
         if(yes){
