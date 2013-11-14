@@ -15,3 +15,4 @@ The `Ai.js` class can use various `Brains` to make decision.
 # TODO
 
 1. Port `McBrain` and `PomDPBrain` to `C++`, which can be compiled to `asm.js` for better performance
+1. Multi-player support
