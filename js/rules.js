@@ -28,7 +28,17 @@ define(function(){
                     return c.suit === firstSuit;
                 });
                 if(vcards.length === 0){
-                    return vcards.concat(cards);
+                    if(cards.length === 13){
+                        vcards = cards.filter(function(c){
+                            return c.suit !== 1 && !(c.suit === 0 && c.num === 11);
+                        });
+                        if(vcards.length === 0){
+                            vcards = cards;
+                        }
+                        return vcards;
+                    }else{
+                        return vcards.concat(cards);
+                    }
                 }else{
                     return vcards;
                 }

@@ -30,11 +30,13 @@ function(Player,  $){
     Ai.prototype.transferTo = function(other){
         var selected = this.selected;
         Player.prototype.transferTo.call(this, other);
-        this.brain.watch({
-            type: "in",
-            player: other,
-            cards: selected
-        });
+        if(selected){
+            this.brain.watch({
+                type: "in",
+                player: other,
+                cards: selected
+            });
+        }
     };
 
     Ai.prototype.watch = function(info){
