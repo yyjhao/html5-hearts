@@ -66,9 +66,9 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
         });
     };
 
-    var adds = [1, 3, 2];
+    var adds = [1, 3, 2, 0];
     var getPlayerForTransfer = function(id){
-        return (id + adds[rounds % 3]) % 4;
+        return (id + adds[(rounds - 1) % 4]) % 4;
     };
 
     return {
@@ -151,7 +151,11 @@ function(ui,   Human,   Ai,   board,   config,   $,        rules,   RandomBrain,
                 'start': function(){
                     rounds++;
                     $.when.apply($, players.map(function(p){
-                        return p.prepareTransfer(rounds % 3);
+                        var dir = (rounds - 1) % 4;
+                        if(dir < 3){
+                            return p.prepareTransfer(dir);
+                        }
+                        return $.Deferred().resolve();
                     })).done(this.next.bind(this));
                 },
                 'passing': function(){
