@@ -89,8 +89,10 @@ function(Row ,  Waste,   domBinding){
     Player.prototype.transferTo = function(other){
         var cards = this.selected;
         this.selected = null;
-        this.out(cards);
-        other.takeIn(cards);
+        if(cards){
+            this.out(cards);
+            other.takeIn(cards);
+        }
     };
 
     return Player;
