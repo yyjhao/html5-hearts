@@ -143,7 +143,7 @@ define(function(){
             numText.className = 'num';
             numText.innerHTML = numtext;
 
-            front = document.createElement('div');
+            var front = document.createElement('div');
             front.className = 'front';
             front.appendChild(numText);
             display.classList.add(suits[suit]);
@@ -154,7 +154,7 @@ define(function(){
 
             display.appendChild(front);
 
-            back = document.createElement('div');
+            var back = document.createElement('div');
             back.className = 'back';
 
             display.appendChild(back);
